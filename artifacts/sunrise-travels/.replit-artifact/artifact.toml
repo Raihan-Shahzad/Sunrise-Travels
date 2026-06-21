@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Sunrise Travels"
+version = "1.0.0"
+id = "artifacts/sunrise-travels"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22083
+
+[services.development]
+run = "pnpm --filter @workspace/sunrise-travels run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/sunrise-travels", "run", "build" ]
+publicDir = "artifacts/sunrise-travels/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22083"
+BASE_PATH = "/"
