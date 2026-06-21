@@ -5,7 +5,7 @@ export default function AboutPage() {
     <div className="bg-white min-h-screen">
       {/* Hero */}
       <section className="bg-slate-900 text-white py-24 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-[url('/images/hero.jpg')] bg-cover bg-center"></div>
+        <div className="absolute inset-0 opacity-20 bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop')"}}></div>
         <div className="container mx-auto px-4 relative z-10 text-center max-w-4xl">
           <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-4 block">Our Story</span>
           <h1 className="font-heading text-4xl md:text-6xl font-bold mb-6">
@@ -21,10 +21,8 @@ export default function AboutPage() {
       <section className="py-20 container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
           <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl">
-            <div className="absolute inset-0 bg-[url('/images/hero.jpg')] bg-cover bg-center"></div>
-            <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-              <span className="text-primary font-bold text-2xl opacity-50">Sunrise Team</span>
-            </div>
+            <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=800&auto=format&fit=crop')"}}></div>
+            <div className="absolute inset-0 bg-primary/20"></div>
           </div>
 
           <div className="space-y-8">

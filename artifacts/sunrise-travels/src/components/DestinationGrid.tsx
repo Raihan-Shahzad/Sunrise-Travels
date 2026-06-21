@@ -2,14 +2,14 @@ import { motion } from "framer-motion";
 import { Link } from "wouter";
 
 const destinations = [
-  { name: "Pakistan", image: "/images/destinations/pakistan.jpg", price: "from £550" },
-  { name: "Saudi Arabia", image: "/images/destinations/saudi.jpg", price: "from £450" },
-  { name: "Dubai", image: "/images/destinations/dubai.jpg", price: "from £350" },
-  { name: "Turkey", image: "/images/destinations/turkey.jpg", price: "from £250" },
-  { name: "Malaysia", image: "/images/destinations/malaysia.jpg", price: "from £650" },
-  { name: "Thailand", image: "/images/destinations/thailand.jpg", price: "from £500" },
-  { name: "USA", image: "/images/destinations/usa.jpg", price: "from £450" },
-  { name: "Canada", image: "/images/destinations/canada.jpg", price: "from £450" },
+  { name: "Pakistan", image: "https://images.unsplash.com/photo-1586810724476-c294fb7ac01b?q=80&w=800&auto=format&fit=crop", price: "from £550" },
+  { name: "Saudi Arabia", image: "https://images.unsplash.com/photo-1565552643983-c65d9147a2b0?q=80&w=800&auto=format&fit=crop", price: "from £450" },
+  { name: "Dubai", image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=800&auto=format&fit=crop", price: "from £350" },
+  { name: "Turkey", image: "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?q=80&w=800&auto=format&fit=crop", price: "from £250" },
+  { name: "Malaysia", image: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=800&auto=format&fit=crop", price: "from £650" },
+  { name: "Thailand", image: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?q=80&w=800&auto=format&fit=crop", price: "from £500" },
+  { name: "USA", image: "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=800&auto=format&fit=crop", price: "from £450" },
+  { name: "Canada", image: "https://images.unsplash.com/photo-1519832979-6fa011b87667?q=80&w=800&auto=format&fit=crop", price: "from £450" },
 ];
 
 export default function DestinationGrid() {
