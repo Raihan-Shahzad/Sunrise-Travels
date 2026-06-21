@@ -1,5 +1,6 @@
 import NADRAForm from "@/components/forms/NADRAForm";
-import { AlertTriangle, CheckCircle2, FileText, Clock, Users } from "lucide-react";
+import { AlertTriangle, CheckCircle2, FileText, Clock, Users, CalendarCheck } from "lucide-react";
+import { Link } from "wouter";
 
 const services = [
   {
@@ -33,6 +34,20 @@ export default function NADRAPage() {
         </div>
       </section>
 
+      <section className="py-8 bg-accent/10 border-b border-accent/20">
+        <div className="container mx-auto px-4 max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <CalendarCheck className="w-8 h-8 text-accent shrink-0" />
+            <div>
+              <p className="font-semibold text-slate-900">Need in-person help?</p>
+              <p className="text-sm text-slate-600">Book a free consultation at our Luton office.</p>
+            </div>
+          </div>
+          <Link href="/appointments?service=nadra" className="shrink-0 bg-accent hover:bg-accent/90 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
+            Book an Appointment
+          </Link>
+        </div>
+      </section>
       <section className="py-16 container mx-auto px-4">
         <div className="max-w-4xl mx-auto bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg mb-12 shadow-sm">
           <div className="flex gap-4">

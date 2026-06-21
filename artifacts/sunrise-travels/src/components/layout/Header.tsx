@@ -58,6 +58,7 @@ export default function Header() {
           <Link href="/nadra-assistance" className="hover:text-primary transition-colors">NADRA</Link>
           <Link href="/pakistani-visa-assistance" className="hover:text-primary transition-colors">Visa</Link>
           <Link href="/passport-assistance" className="hover:text-primary transition-colors">Passport</Link>
+          <Link href="/appointments" className="bg-accent hover:bg-accent/90 text-white px-4 py-1.5 rounded-full font-semibold text-sm transition-colors">Book Appt</Link>
         </nav>
 
         {/* Desktop CTAs */}

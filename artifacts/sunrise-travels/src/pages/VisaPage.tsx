@@ -1,5 +1,6 @@
 import VisaForm from "@/components/forms/VisaForm";
-import { AlertTriangle, CheckCircle2, Globe, FileCheck, Briefcase } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Globe, FileCheck, Briefcase, CalendarCheck } from "lucide-react";
+import { Link } from "wouter";
 
 const services = [
   { title: "Tourist Visas", desc: "Guidance for short-term tourism visas, including required itineraries and accommodation proofs.", icon: Globe },
@@ -16,6 +17,21 @@ export default function VisaPage() {
           <p className="text-xl text-primary-100 mb-8 leading-relaxed">
             Navigate the visa application process with confidence. We offer meticulous document review and expert consultation.
           </p>
+        </div>
+      </section>
+
+      <section className="py-8 bg-accent/10 border-b border-accent/20">
+        <div className="container mx-auto px-4 max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <CalendarCheck className="w-8 h-8 text-accent shrink-0" />
+            <div>
+              <p className="font-semibold text-slate-900">Need in-person help?</p>
+              <p className="text-sm text-slate-600">Book a free consultation at our Luton office.</p>
+            </div>
+          </div>
+          <Link href="/appointments?service=visa" className="shrink-0 bg-accent hover:bg-accent/90 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
+            Book an Appointment
+          </Link>
         </div>
       </section>
 

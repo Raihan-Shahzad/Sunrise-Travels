@@ -1,5 +1,6 @@
 import PassportForm from "@/components/forms/PassportForm";
-import { AlertTriangle, CheckCircle2, Ticket } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Ticket, CalendarCheck } from "lucide-react";
+import { Link } from "wouter";
 
 export default function PassportPage() {
   return (
@@ -10,6 +11,21 @@ export default function PassportPage() {
           <p className="text-xl text-primary-100 mb-8 leading-relaxed">
             Expert guidance for Pakistani Machine Readable Passports (MRP) renewals and new applications.
           </p>
+        </div>
+      </section>
+
+      <section className="py-8 bg-accent/10 border-b border-accent/20">
+        <div className="container mx-auto px-4 max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <CalendarCheck className="w-8 h-8 text-accent shrink-0" />
+            <div>
+              <p className="font-semibold text-slate-900">Need in-person help?</p>
+              <p className="text-sm text-slate-600">Book a free consultation at our Luton office.</p>
+            </div>
+          </div>
+          <Link href="/appointments?service=passport" className="shrink-0 bg-accent hover:bg-accent/90 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
+            Book an Appointment
+          </Link>
         </div>
       </section>
 

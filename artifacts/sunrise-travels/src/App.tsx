@@ -15,6 +15,7 @@ import VisaPage from "@/pages/VisaPage";
 import PassportPage from "@/pages/PassportPage";
 import BlogPage from "@/pages/BlogPage";
 import BlogPostPage from "@/pages/BlogPostPage";
+import AppointmentsPage from "@/pages/AppointmentsPage";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ function Router() {
           <Route path="/passport-assistance" component={PassportPage} />
           <Route path="/blog" component={BlogPage} />
           <Route path="/blog/:slug" component={BlogPostPage} />
+          <Route path="/appointments" component={AppointmentsPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
