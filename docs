@@ -1,0 +1,18 @@
+
+---
+
+### `next.config.mjs`
+
+```js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  swcMinify: true,
+  images: {
+    remotePatterns: [], // add external image domains if needed
+  },
+  experimental: {
+    serverComponentsExternalPackages: ["@prisma/client"],
+  },
+};
+export default nextConfig;

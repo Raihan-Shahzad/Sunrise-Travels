@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <!-- Sun circle -->
+  <circle cx="20" cy="22" r="10" fill="#F5A623"/>
+  <!-- Sun rays -->
+  <g stroke="#F5A623" stroke-width="2.5" stroke-linecap="round">
+    <line x1="20" y1="6" x2="20" y2="9"/>
+    <line x1="30.5" y1="11.5" x2="28.4" y2="13.6"/>
+    <line x1="34" y1="22" x2="31" y2="22"/>
+    <line x1="9.5" y1="11.5" x2="11.6" y2="13.6"/>
+    <line x1="6" y1="22" x2="9" y2="22"/>
+  </g>
+  <!-- Horizon line -->
+  <rect x="4" y="28" width="32" height="3" rx="1.5" fill="#0F4C81"/>
+  <!-- Plane silhouette -->
+  <path d="M8 18l4-2 2 1 3-1.5 6 3-1 1.5-4-1.5-2 1-3-.5-1 1z" fill="#0F4C81" opacity="0.7" transform="translate(4,-4) scale(0.8)"/>
+</svg>
