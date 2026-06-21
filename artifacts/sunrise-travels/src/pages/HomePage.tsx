@@ -1,6 +1,7 @@
 import Hero from "@/components/Hero";
 import FeatureSection from "@/components/FeatureSection";
 import DestinationGrid from "@/components/DestinationGrid";
+import UmrahPromoSection from "@/components/UmrahPromoSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import Stats from "@/components/Stats";
 import Testimonials from "@/components/Testimonials";
@@ -12,6 +13,7 @@ export default function HomePage() {
     <>
       <Hero />
       <FeatureSection />
+      <UmrahPromoSection />
       <DestinationGrid />
       <WhyChooseUs />
       <Stats />
