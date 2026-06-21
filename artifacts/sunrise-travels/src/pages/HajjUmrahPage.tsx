@@ -1,4 +1,3 @@
-import PilgrimageForm from "@/components/forms/PilgrimageForm";
 import { motion } from "framer-motion";
 import { Check, Phone, MessageCircle, Star, Shield, Heart, Award, Clock, Plane, Utensils, Bus, FileText, MapPin, Users, ChevronRight, Building2 } from "lucide-react";
 import { PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
@@ -132,10 +131,7 @@ export default function HajjUmrahPage() {
 
       {/* ── Main content ── */}
       <section className="py-16 container mx-auto px-4">
-        <div className="grid lg:grid-cols-3 gap-12 max-w-6xl mx-auto">
-
-          {/* Left: packages + content */}
-          <div className="lg:col-span-2 space-y-16">
+        <div className="max-w-5xl mx-auto space-y-16">
 
             {/* Why choose us */}
             <div>
@@ -279,14 +275,6 @@ export default function HajjUmrahPage() {
               </div>
             </div>
 
-          </div>
-
-          {/* Right: sticky form */}
-          <div>
-            <div className="sticky top-28">
-              <PilgrimageForm />
-            </div>
-          </div>
         </div>
       </section>
 
