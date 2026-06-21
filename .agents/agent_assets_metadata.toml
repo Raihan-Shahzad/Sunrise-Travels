@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "9ei_5hblZnAvSYNZs2HE4"
+uri = "file://artifacts/sunrise-travels-mobile/assets/images/icon.png"
+type = "image"
+title = "sunrise-travels-app-icon"
+
+[[generated]]
+id = "bobReBY-pgS7Dm94nPin9"
+uri = "file://artifacts/sunrise-travels-mobile/assets/images/hajj-hero.png"
+type = "image"
+title = "mecca-kaaba-aerial"
