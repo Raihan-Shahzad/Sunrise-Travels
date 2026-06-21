@@ -1,6 +1,5 @@
-import PassportForm from "@/components/forms/PassportForm";
-import { AlertTriangle, CheckCircle2, Ticket, CalendarCheck } from "lucide-react";
-import { Link } from "wouter";
+import AppointmentBookingCard from "@/components/AppointmentBookingCard";
+import { AlertTriangle, CheckCircle2, Ticket } from "lucide-react";
 
 export default function PassportPage() {
   return (
@@ -14,23 +13,8 @@ export default function PassportPage() {
         </div>
       </section>
 
-      <section className="py-8 bg-accent/10 border-b border-accent/20">
-        <div className="container mx-auto px-4 max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <CalendarCheck className="w-8 h-8 text-accent shrink-0" />
-            <div>
-              <p className="font-semibold text-slate-900">Need in-person help?</p>
-              <p className="text-sm text-slate-600">Book a free consultation at our Luton office.</p>
-            </div>
-          </div>
-          <Link href="/appointments?service=passport" className="shrink-0 bg-accent hover:bg-accent/90 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
-            Book an Appointment
-          </Link>
-        </div>
-      </section>
-
       <section className="py-16 container mx-auto px-4">
-        <div className="max-w-4xl mx-auto bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg mb-12 shadow-sm">
+        <div className="max-w-5xl mx-auto bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg mb-12 shadow-sm">
           <div className="flex gap-4">
             <AlertTriangle className="w-8 h-8 text-amber-500 shrink-0" />
             <div>
@@ -42,7 +26,7 @@ export default function PassportPage() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div className="grid lg:grid-cols-3 gap-12 max-w-5xl mx-auto">
           <div className="lg:col-span-2 space-y-12">
             <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
               <h2 className="font-heading text-2xl font-bold mb-6 text-slate-900">How We Assist You</h2>
@@ -50,10 +34,10 @@ export default function PassportPage() {
                 {[
                   { num: 1, title: "Document Review", desc: "We thoroughly check your existing documents (CNIC, old passport, etc.) to ensure they meet consulate requirements." },
                   { num: 2, title: "Application Preparation", desc: "Guidance on completing the necessary forms accurately to avoid rejections." },
-                  { num: 3, title: "Appointment Booking", desc: "Assistance with scheduling your visit to the relevant Pakistani consulate or High Commission." }
+                  { num: 3, title: "Consulate Appointment", desc: "Assistance with scheduling your visit to the relevant Pakistani consulate or High Commission." }
                 ].map((step) => (
                   <li key={step.num} className="flex items-start gap-3 text-slate-600">
-                    <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-accent shrink-0 mt-0.5">{step.num}</div>
+                    <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center text-accent shrink-0 mt-0.5 font-bold text-sm">{step.num}</div>
                     <span><strong className="text-slate-900">{step.title}:</strong> {step.desc}</span>
                   </li>
                 ))}
@@ -67,11 +51,28 @@ export default function PassportPage() {
                 </div>
               </div>
             </div>
+
+            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+              <h2 className="font-heading text-2xl font-bold mb-6 text-slate-900">Documents You'll Typically Need</h2>
+              <ul className="space-y-4">
+                {[
+                  "Valid or expired Pakistani Passport",
+                  "Original CNIC / NICOP",
+                  "Passport-sized photographs (white background)",
+                  "Proof of address (utility bill, bank statement)"
+                ].map((doc, i) => (
+                  <li key={i} className="flex items-start gap-3 text-slate-600">
+                    <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
+                    <span>{doc}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <div>
             <div className="sticky top-28">
-              <PassportForm />
+              <AppointmentBookingCard service="passport" />
             </div>
           </div>
         </div>

@@ -10,6 +10,15 @@ const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 type Service = "nadra" | "visa" | "passport";
 
+function getInitialState() {
+  const params = new URLSearchParams(window.location.search);
+  const svc = params.get("service") as Service | null;
+  const sub = params.get("sub") ?? "";
+  const validService = svc && ["nadra", "visa", "passport"].includes(svc) ? svc : null;
+  const initialStep = validService && sub ? 1 : 0;
+  return { service: validService, subService: sub, step: initialStep };
+}
+
 const SERVICES = {
   nadra: {
     label: "NADRA Assistance",
@@ -87,9 +96,10 @@ function formatDateLabel(d: Date) {
 const STEPS = ["Service", "Date & Time", "Your Details", "Confirm"];
 
 export default function AppointmentsPage() {
-  const [step, setStep] = useState(0);
-  const [service, setService] = useState<Service | null>(null);
-  const [subService, setSubService] = useState("");
+  const init = getInitialState();
+  const [step, setStep] = useState(init.step);
+  const [service, setService] = useState<Service | null>(init.service);
+  const [subService, setSubService] = useState(init.subService);
   const [dateKey, setDateKey] = useState("");
   const [time, setTime] = useState("");
   const [name, setName] = useState("");

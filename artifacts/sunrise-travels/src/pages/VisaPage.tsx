@@ -1,6 +1,5 @@
-import VisaForm from "@/components/forms/VisaForm";
-import { AlertTriangle, CheckCircle2, Globe, FileCheck, Briefcase, CalendarCheck } from "lucide-react";
-import { Link } from "wouter";
+import AppointmentBookingCard from "@/components/AppointmentBookingCard";
+import { AlertTriangle, CheckCircle2, Globe, FileCheck, Briefcase } from "lucide-react";
 
 const services = [
   { title: "Tourist Visas", desc: "Guidance for short-term tourism visas, including required itineraries and accommodation proofs.", icon: Globe },
@@ -20,23 +19,8 @@ export default function VisaPage() {
         </div>
       </section>
 
-      <section className="py-8 bg-accent/10 border-b border-accent/20">
-        <div className="container mx-auto px-4 max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <CalendarCheck className="w-8 h-8 text-accent shrink-0" />
-            <div>
-              <p className="font-semibold text-slate-900">Need in-person help?</p>
-              <p className="text-sm text-slate-600">Book a free consultation at our Luton office.</p>
-            </div>
-          </div>
-          <Link href="/appointments?service=visa" className="shrink-0 bg-accent hover:bg-accent/90 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
-            Book an Appointment
-          </Link>
-        </div>
-      </section>
-
       <section className="py-16 container mx-auto px-4">
-        <div className="max-w-4xl mx-auto bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg mb-12 shadow-sm">
+        <div className="max-w-5xl mx-auto bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg mb-12 shadow-sm">
           <div className="flex gap-4">
             <AlertTriangle className="w-8 h-8 text-amber-500 shrink-0" />
             <div>
@@ -48,7 +32,7 @@ export default function VisaPage() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div className="grid lg:grid-cols-3 gap-12 max-w-5xl mx-auto">
           <div className="lg:col-span-2 space-y-12">
             <div>
               <h2 className="font-heading text-3xl font-bold mb-8 text-slate-900">Visa Categories</h2>
@@ -88,7 +72,7 @@ export default function VisaPage() {
 
           <div>
             <div className="sticky top-28">
-              <VisaForm />
+              <AppointmentBookingCard service="visa" />
             </div>
           </div>
         </div>

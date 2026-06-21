@@ -1,6 +1,5 @@
-import NADRAForm from "@/components/forms/NADRAForm";
-import { AlertTriangle, CheckCircle2, FileText, Clock, Users, CalendarCheck } from "lucide-react";
-import { Link } from "wouter";
+import AppointmentBookingCard from "@/components/AppointmentBookingCard";
+import { AlertTriangle, CheckCircle2, FileText, Clock, Users } from "lucide-react";
 
 const services = [
   {
@@ -34,22 +33,8 @@ export default function NADRAPage() {
         </div>
       </section>
 
-      <section className="py-8 bg-accent/10 border-b border-accent/20">
-        <div className="container mx-auto px-4 max-w-4xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <CalendarCheck className="w-8 h-8 text-accent shrink-0" />
-            <div>
-              <p className="font-semibold text-slate-900">Need in-person help?</p>
-              <p className="text-sm text-slate-600">Book a free consultation at our Luton office.</p>
-            </div>
-          </div>
-          <Link href="/appointments?service=nadra" className="shrink-0 bg-accent hover:bg-accent/90 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
-            Book an Appointment
-          </Link>
-        </div>
-      </section>
       <section className="py-16 container mx-auto px-4">
-        <div className="max-w-4xl mx-auto bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg mb-12 shadow-sm">
+        <div className="max-w-5xl mx-auto bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg mb-12 shadow-sm">
           <div className="flex gap-4">
             <AlertTriangle className="w-8 h-8 text-amber-500 shrink-0" />
             <div>
@@ -61,7 +46,7 @@ export default function NADRAPage() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div className="grid lg:grid-cols-3 gap-12 max-w-5xl mx-auto">
           <div className="lg:col-span-2 space-y-12">
             <div>
               <h2 className="font-heading text-3xl font-bold mb-8 text-slate-900">How We Can Help</h2>
@@ -98,14 +83,14 @@ export default function NADRAPage() {
               </ul>
               <p className="mt-6 text-sm text-slate-500 bg-slate-50 p-4 rounded-lg">
                 <Clock className="w-4 h-4 inline mr-2" />
-                Note: Requirements vary strictly by case type. Please submit an enquiry for personalized guidance.
+                Note: Requirements vary strictly by case type. Please book an appointment for personalised guidance.
               </p>
             </div>
           </div>
 
           <div>
             <div className="sticky top-28">
-              <NADRAForm />
+              <AppointmentBookingCard service="nadra" />
             </div>
           </div>
         </div>
