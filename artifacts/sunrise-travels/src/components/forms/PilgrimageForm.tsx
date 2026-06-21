@@ -2,7 +2,6 @@ import { useState } from "react";
 import { User, Mail, Phone, CheckCircle2, AlertCircle, Loader2, ArrowRight, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type JourneyType = "umrah" | "hajj";
 type HotelPref = "3star" | "4star" | "5star";
 type FormState = "idle" | "loading" | "success";
 
@@ -67,7 +66,6 @@ function Stepper({ value, min, max, onChange }: { value: number; min: number; ma
 }
 
 export default function PilgrimageForm() {
-  const [journey, setJourney] = useState<JourneyType>("umrah");
   const [hotel, setHotel] = useState<HotelPref>("4star");
   const [travellers, setTravellers] = useState(2);
   const [month, setMonth] = useState("");
@@ -138,32 +136,11 @@ export default function PilgrimageForm() {
         <div className="relative z-10">
           <p className="text-amber-400 text-sm mb-1">بسم الله</p>
           <h3 className="font-heading text-lg font-bold text-white">Get a Free Package Quote</h3>
-          <p className="text-emerald-300 text-xs mt-1">Umrah · Hajj · Group & Private</p>
+          <p className="text-emerald-300 text-xs mt-1">Umrah · Group & Private</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="px-5 pb-6 pt-5 space-y-5">
-
-        {/* Journey type */}
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Type of Journey</p>
-          <div className="grid grid-cols-2 gap-2">
-            {(["umrah", "hajj"] as JourneyType[]).map((t) => (
-              <button
-                key={t} type="button"
-                onClick={() => setJourney(t)}
-                className={cn(
-                  "py-3 rounded-xl border-2 text-sm font-bold transition-all",
-                  journey === t
-                    ? "bg-emerald-700 border-emerald-700 text-white shadow-sm"
-                    : "border-slate-200 text-slate-600 hover:border-emerald-300 hover:text-emerald-700"
-                )}
-              >
-                {t === "umrah" ? "🕋 Umrah" : "☪️ Hajj"}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* Hotel preference */}
         <div>
