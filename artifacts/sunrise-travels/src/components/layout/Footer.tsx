@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="space-y-6">
             <Link href="/" className="inline-flex items-center">
-              <img src="/logo.jpg" alt="Sunrise Travels" className="h-14 w-auto rounded-sm" />
+              <img src="/sunrise-travels-logo.png" alt="Sunrise Travels" className="h-20 w-20 object-contain" />
             </Link>
             <p className="text-sm leading-relaxed text-slate-400">
               Your trusted partner for worldwide flights, Hajj & Umrah packages, and professional NADRA, Visa, and Passport assistance.
