@@ -9,11 +9,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="space-y-6">
-            <Link href="/" className="flex items-center gap-2">
-              <img src="/logo.svg" alt="Sunrise Travels" className="h-10 w-10 opacity-90" />
-              <span className="font-heading text-2xl font-bold text-white">
-                Sunrise Travels
-              </span>
+            <Link href="/" className="inline-flex items-center">
+              <img src="/logo.jpg" alt="Sunrise Travels" className="h-14 w-auto rounded-sm" />
             </Link>
             <p className="text-sm leading-relaxed text-slate-400">
               Your trusted partner for worldwide flights, Hajj & Umrah packages, and professional NADRA, Visa, and Passport assistance.
