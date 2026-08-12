@@ -19,10 +19,6 @@ const faqs = [
     question: "Can you help me if I've lost my Pakistani passport?",
     answer: "Yes, we provide full assistance for lost, damaged, or expired Pakistani passports. We guide you through the required documentation, help fill out the forms, and assist with booking your appointment at the consulate."
   },
-  {
-    question: "Are my flight bookings financially protected?",
-    answer: "Yes, Sunrise Travels is ATOL protected and IATA accredited. Your financial security and peace of mind are guaranteed when booking flights and package holidays with us."
-  }
 ];
 
 export default function FAQSection() {

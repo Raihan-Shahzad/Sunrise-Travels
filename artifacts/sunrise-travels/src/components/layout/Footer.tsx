@@ -88,10 +88,6 @@ export default function Footer() {
                 Subscribe
               </button>
             </form>
-            <div className="pt-4 flex gap-3 opacity-60">
-              <span className="text-xs">ATOL Protected</span>
-              <span className="text-xs">IATA Accredited</span>
-            </div>
           </div>
         </div>
 

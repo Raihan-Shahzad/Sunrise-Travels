@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, Phone, MessageCircle, Star, Shield, Heart, Award, Clock, Plane, Utensils, Bus, FileText, MapPin, Users, ChevronRight, Building2 } from "lucide-react";
+import { Check, Phone, MessageCircle, Star, Shield, Heart, Clock, Plane, Bus, FileText, MapPin, Users, ChevronRight, Building2 } from "lucide-react";
 import { PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
 import { Link } from "wouter";
 
@@ -26,7 +26,7 @@ const packages = [
     makkah: "4-Star Hotel · Emaar Grand or similar",
     madinah: "4-Star Hotel · Saja Al Madinah or similar",
     nights: "14 nights",
-    features: ["Return Flights (Economy)", "Umrah Visa Included", "Private Transfers", "Guided Ziyarah in both cities", "Breakfast Included", "24/7 Dedicated Support"],
+     features: ["Return Flights (Economy)", "Umrah Visa Included", "Private Transfers", "Guided Ziyarah in both cities", "24/7 Dedicated Support"],
   },
   {
     tier: "Premium",
@@ -38,7 +38,7 @@ const packages = [
     makkah: "5-Star Hotel · Swissotel or similar",
     madinah: "5-Star Hotel · Pullman Zamzam or similar",
     nights: "14–21 nights",
-    features: ["Return Flights (Business Class opt.)", "E-Visa Fast Track", "Private Luxury Transfers", "Full Board (Breakfast + Dinner)", "Exclusive Guided Ziyarah", "Dedicated Agent"],
+     features: ["Return Flights (Business Class opt.)", "E-Visa Fast Track", "Private Luxury Transfers", "Exclusive Guided Ziyarah", "Dedicated Agent"],
   },
 ];
 
@@ -46,15 +46,12 @@ const included = [
   { icon: Plane, label: "Return Flights", sub: "From UK airports" },
   { icon: FileText, label: "Umrah Visa", sub: "Fast processing" },
   { icon: Bus, label: "All Transfers", sub: "Airport & intercity" },
-  { icon: Utensils, label: "Meals", sub: "As per package" },
   { icon: MapPin, label: "Ziyarah Tour", sub: "Holy sites visits" },
   { icon: Users, label: "Group Leader", sub: "Experienced scholar" },
-  { icon: Shield, label: "Travel Insurance", sub: "Comprehensive cover" },
   { icon: Clock, label: "24/7 Support", sub: "Always available" },
 ];
 
 const whyUs = [
-  { icon: Award, title: "ATOL & ABTA Protected", desc: "Your money is fully protected. Book with complete confidence." },
   { icon: Heart, title: "Scholar-Led Groups", desc: "Our groups are led by experienced scholars who guide you spiritually throughout." },
   { icon: Shield, title: "Over 20 Years Experience", desc: "We have been organising pilgrimages for over two decades from the UK." },
   { icon: Star, title: "5-Star Reviews", desc: "Hundreds of satisfied pilgrims return to us year after year." },
@@ -120,7 +117,7 @@ export default function HajjUmrahPage() {
       <div className="bg-[#0D2B1D] border-b border-emerald-900">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-wrap justify-center gap-x-10 gap-y-2 text-sm text-emerald-200">
-            {["ATOL Protected", "ABTA Member", "20+ Years Experience", "Scholar-Led Groups", "IATA Approved"].map((t) => (
+            {["20+ Years Experience", "Scholar-Led Groups"].map((t) => (
               <span key={t} className="flex items-center gap-2">
                 <span className="text-amber-400">✦</span> {t}
               </span>

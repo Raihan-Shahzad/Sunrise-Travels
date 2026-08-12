@@ -1,10 +1,9 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { ChevronRight, Star, Shield, Users, Clock } from "lucide-react";
+import { ChevronRight, Star, Users, Clock } from "lucide-react";
 
 const highlights = [
   { icon: Star, text: "3, 4 & 5-Star packages" },
-  { icon: Shield, text: "ATOL & ABTA protected" },
   { icon: Users, text: "Scholar-led groups" },
   { icon: Clock, text: "Packages from £850 pp" },
 ];

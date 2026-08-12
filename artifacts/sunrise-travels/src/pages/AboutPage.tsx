@@ -1,4 +1,4 @@
-import { ShieldCheck, Users, Trophy, HeartHandshake } from "lucide-react";
+import { Users, HeartHandshake } from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -41,14 +41,6 @@ export default function AboutPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-6 pt-4 border-t border-slate-100">
-              <div className="flex items-center gap-3">
-                <ShieldCheck className="w-8 h-8 text-primary" />
-                <span className="font-semibold text-slate-900">ATOL Protected</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Trophy className="w-8 h-8 text-primary" />
-                <span className="font-semibold text-slate-900">IATA Accredited</span>
-              </div>
               <div className="flex items-center gap-3">
                 <Users className="w-8 h-8 text-primary" />
                 <span className="font-semibold text-slate-900">15+ Years Exp.</span>
