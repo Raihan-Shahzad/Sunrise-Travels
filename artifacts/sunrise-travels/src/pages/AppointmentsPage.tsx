@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ChevronRight, Calendar, Clock, User, FileText, Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,49 +27,42 @@ const SERVICES = {
     border: "border-blue-200",
     activeBorder: "border-blue-500",
     subtypes: [
-      "New NICOP Application",
-      "NICOP Renewal",
-      "NICOP Replacement (Lost/Damaged)",
-      "Pakistan Origin Card (POC)",
-      "Family Registration Certificate (FRC)",
-      "Other NADRA Query",
+        "New NICOP / NICOP Renewal",
+        "Lost / Damaged NICOP Replacement",
+        "Other NADRA Query",
     ],
   },
   visa: {
-    label: "Visa Assistance",
+      label: "Pakistani Visa Assistance",
     color: "text-emerald-600",
     bg: "bg-emerald-50",
     border: "border-emerald-200",
     activeBorder: "border-emerald-500",
     subtypes: [
-      "Tourist Visa Application",
-      "Family Visit Visa",
-      "Business Visa",
-      "Visa Renewal / Extension",
-      "Visa Enquiry / Consultation",
+        "New Visa / Renewal",
+        "Visa Extension",
+        "Other Visa Queries",
     ],
   },
   passport: {
-    label: "Passport Assistance",
+      label: "British & Pakistani Passport Assistance",
     color: "text-violet-600",
     bg: "bg-violet-50",
     border: "border-violet-200",
     activeBorder: "border-violet-500",
     subtypes: [
-      "New Passport Application",
-      "Passport Renewal",
-      "Lost or Damaged Passport",
-      "Urgent / Fast-Track Passport",
-      "Passport Consultation",
+        "New Passport / Passport Renewal",
+        "Lost / Damaged Passport Replacement",
+        "Other Passport Queries",
     ],
   },
 };
 
 const TIMES = [
-  "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
-  "12:00 PM", "12:30 PM", "01:00 PM", "01:30 PM",
-  "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM",
-  "04:00 PM", "04:30 PM", "05:00 PM",
+  "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
+  "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM",
+  "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM",
+  "05:00 PM",
 ];
 
 function getAvailableDates(count = 14) {
@@ -110,13 +103,45 @@ export default function AppointmentsPage() {
   const [booked, setBooked] = useState(false);
   const [bookingRef, setBookingRef] = useState("");
   const [error, setError] = useState("");
+  const [slots, setSlots] = useState<Record<string, boolean>>({});
+  const [slotsLoading, setSlotsLoading] = useState(false);
 
   const dates = getAvailableDates(14);
   const selectedDate = dates.find((d) => formatDateKey(d) === dateKey);
 
   const canNextStep1 = !!service && !!subService;
   const canNextStep2 = !!dateKey && !!time;
-  const canNextStep3 = name.trim() && email.trim() && phone.trim();
+  const canNextStep3 = !!name.trim() && !!email.trim() && !!phone.trim();
+
+  useEffect(() => {
+    if (!dateKey) {
+      setSlots({});
+      return;
+    }
+
+    let cancelled = false;
+    setSlotsLoading(true);
+    fetch(`${BASE}/api/appointments/slots?date=${encodeURIComponent(dateKey)}`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Unable to load availability");
+        return res.json() as Promise<{ slots: Array<{ time: string; available: boolean }> }>;
+      })
+      .then((data) => {
+        if (!cancelled) {
+          setSlots(Object.fromEntries(data.slots.map((slot) => [slot.time, slot.available])));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setSlots({});
+      })
+      .finally(() => {
+        if (!cancelled) setSlotsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [dateKey]);
 
   async function handleSubmit() {
     setLoading(true);
@@ -203,7 +228,7 @@ export default function AppointmentsPage() {
         <div className="container mx-auto px-4 text-center max-w-2xl">
           <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4">Book an Appointment</h1>
           <p className="text-primary-100 text-lg">
-            Schedule a free consultation at our Luton office for NADRA, Visa, or Passport assistance.
+            Schedule a free consultation at our Luton office for NADRA, Pakistani Visa, or British & Pakistani Passport assistance.
           </p>
         </div>
       </section>
@@ -304,7 +329,7 @@ export default function AppointmentsPage() {
             <motion.div key="step1" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="space-y-8">
               <div>
                 <h2 className="font-heading text-2xl font-bold text-slate-900 mb-2">Pick a date & time</h2>
-                <p className="text-slate-500">Office hours: Monday – Friday, 10:00 AM – 5:00 PM</p>
+            <p className="text-slate-500">Office hours: Monday – Friday, 11:00 AM – 5:00 PM · 30-minute appointments</p>
               </div>
 
               <div>
@@ -340,18 +365,25 @@ export default function AppointmentsPage() {
                     <Clock className="w-5 h-5 text-primary" /> Available Times
                   </h3>
                   <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                    {TIMES.map((t) => (
+                    {slotsLoading ? (
+                      <div className="col-span-full flex items-center gap-2 text-sm text-slate-500 py-3">
+                        <Loader2 className="w-4 h-4 animate-spin" /> Checking live availability…
+                      </div>
+                    ) : TIMES.map((t) => (
                       <button
                         key={t}
                         onClick={() => setTime(t)}
+                        disabled={slots[t] === false}
                         className={cn(
                           "py-2.5 rounded-xl border-2 text-sm font-medium transition-all",
                           time === t
                             ? "bg-primary border-primary text-white shadow-md"
-                            : "bg-white border-slate-200 text-slate-700 hover:border-primary/60"
+                            : slots[t] === false
+                              ? "bg-slate-100 border-slate-100 text-slate-400 cursor-not-allowed line-through"
+                              : "bg-white border-slate-200 text-slate-700 hover:border-primary/60"
                         )}
                       >
-                        {t}
+                        {t}{slots[t] === false && <span className="block text-[10px] no-underline">Booked</span>}
                       </button>
                     ))}
                   </div>

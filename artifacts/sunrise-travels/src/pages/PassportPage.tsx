@@ -22,9 +22,9 @@ export default function PassportPage() {
       {/* Hero */}
       <section className="bg-primary text-white py-20">
         <div className="container mx-auto px-4 text-center max-w-3xl">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-6">Passport Assistance</h1>
+          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-6">British & Pakistani Passport Assistance</h1>
           <p className="text-xl text-primary-100 leading-relaxed">
-            Expert guidance for Pakistani Machine Readable Passport (MRP) renewals and new applications.
+            Expert guidance for British and Pakistani passport applications, renewals, and replacements.
           </p>
         </div>
       </section>

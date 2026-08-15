@@ -3,6 +3,8 @@ import { Check, Phone, MessageCircle, Star, Shield, Heart, Clock, Plane, Bus, Fi
 import { PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
 import { Link } from "wouter";
 
+const ASSET_BASE = import.meta.env.BASE_URL;
+
 const packages = [
   {
     tier: "Economy",
@@ -58,8 +60,8 @@ const whyUs = [
 ];
 
 const sites = [
-  { name: "Masjid al-Haram", location: "Makkah", image: "https://images.unsplash.com/photo-1565552643983-c65d9147a2b0?q=80&w=800&auto=format&fit=crop" },
-  { name: "Masjid Nabawi", location: "Madinah", image: "https://images.unsplash.com/photo-1591604130424-a8e22e50e8c6?q=80&w=800&auto=format&fit=crop" },
+  { name: "Masjid al-Haram", location: "Makkah", image: `${ASSET_BASE}images/makkah-kaaba.jpg` },
+  { name: "Masjid Nabawi", location: "Madinah", image: `${ASSET_BASE}images/madinah-masjid-nabawi.jpg` },
   { name: "Mount Arafat", location: "Makkah", image: "https://images.unsplash.com/photo-1590076215667-875d4ef2d7bb?q=80&w=800&auto=format&fit=crop" },
   { name: "Masjid Quba", location: "Madinah", image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=800&auto=format&fit=crop" },
 ];
@@ -72,7 +74,7 @@ export default function HajjUmrahPage() {
       <section className="relative min-h-[560px] flex items-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1565552643983-c65d9147a2b0?q=80&w=2000&auto=format&fit=crop')" }}
+          style={{ backgroundImage: `url('${ASSET_BASE}images/makkah-kaaba.jpg')` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0D2B1D]/90 via-[#0D2B1D]/75 to-[#0D2B1D]/90" />
 

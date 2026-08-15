@@ -16,6 +16,7 @@ import PassportPage from "@/pages/PassportPage";
 import BlogPage from "@/pages/BlogPage";
 import BlogPostPage from "@/pages/BlogPostPage";
 import AppointmentsPage from "@/pages/AppointmentsPage";
+import AppointmentInboxPage from "@/pages/AppointmentInboxPage";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ function Router() {
           <Route path="/blog" component={BlogPage} />
           <Route path="/blog/:slug" component={BlogPostPage} />
           <Route path="/appointments" component={AppointmentsPage} />
+          <Route path="/appointment-inbox" component={AppointmentInboxPage} />
           <Route component={NotFound} />
         </Switch>
       </main>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -21,32 +21,25 @@ const SERVICES: Record<ServiceType, { label: string; subtypes: string[] }> = {
   nadra: {
     label: "NADRA Assistance",
     subtypes: [
-      "New NICOP Application",
-      "NICOP Renewal",
-      "NICOP Replacement (Lost/Damaged)",
-      "Pakistan Origin Card (POC)",
-      "Family Registration Certificate (FRC)",
+      "New NICOP / NICOP Renewal",
+      "Lost / Damaged NICOP Replacement",
       "Other NADRA Query",
     ],
   },
   visa: {
-    label: "Visa Assistance",
+    label: "Pakistani Visa Assistance",
     subtypes: [
-      "Tourist Visa Application",
-      "Family Visit Visa",
-      "Business Visa",
-      "Visa Renewal / Extension",
-      "Visa Enquiry / Consultation",
+      "New Visa / Renewal",
+      "Visa Extension",
+      "Other Visa Queries",
     ],
   },
   passport: {
-    label: "Passport Assistance",
+    label: "British & Pakistani Passport Assistance",
     subtypes: [
-      "New Passport Application",
-      "Passport Renewal",
-      "Lost or Damaged Passport",
-      "Urgent / Fast-Track Passport",
-      "Passport Consultation",
+      "New Passport / Passport Renewal",
+      "Lost / Damaged Passport Replacement",
+      "Other Passport Queries",
     ],
   },
 };
@@ -58,10 +51,10 @@ const SERVICE_COLORS: Record<ServiceType, string> = {
 };
 
 const TIMES = [
-  "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
-  "12:00 PM", "12:30 PM", "01:00 PM", "01:30 PM",
-  "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM",
-  "04:00 PM", "04:30 PM", "05:00 PM",
+  "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
+  "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM",
+  "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM",
+  "05:00 PM",
 ];
 
 function getAvailableDates(count = 14): Date[] {
@@ -104,6 +97,8 @@ export default function BookScreen() {
   const [booked, setBooked] = useState(false);
   const [bookingRef, setBookingRef] = useState("");
   const [error, setError] = useState("");
+  const [slots, setSlots] = useState<Record<string, boolean>>({});
+  const [slotsLoading, setSlotsLoading] = useState(false);
 
   const dates = getAvailableDates(14);
   const selectedDate = dates.find((d) => formatDateKey(d) === dateKey);
@@ -113,13 +108,43 @@ export default function BookScreen() {
   const canNext2 = name.trim().length > 0 && email.trim().length > 0 && phone.trim().length > 0;
 
   const styles = makeStyles(colors, topPad, bottomPad);
+  const domain = process.env.EXPO_PUBLIC_DOMAIN;
+  const base = domain ? `https://${domain}` : "";
+
+  useEffect(() => {
+    if (!dateKey) {
+      setSlots({});
+      return;
+    }
+
+    let cancelled = false;
+    setSlotsLoading(true);
+    fetch(`${base}/api/appointments/slots?date=${encodeURIComponent(dateKey)}`)
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Unable to load availability");
+        return res.json() as Promise<{ slots: Array<{ time: string; available: boolean }> }>;
+      })
+      .then((data) => {
+        if (!cancelled) {
+          setSlots(Object.fromEntries(data.slots.map((slot) => [slot.time, slot.available])));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setSlots({});
+      })
+      .finally(() => {
+        if (!cancelled) setSlotsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [dateKey, base]);
 
   async function handleSubmit() {
     setLoading(true);
     setError("");
     try {
-      const domain = process.env.EXPO_PUBLIC_DOMAIN;
-      const base = domain ? `https://${domain}` : "";
       const res = await fetch(`${base}/api/appointments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -293,7 +318,7 @@ export default function BookScreen() {
         {step === 1 && (
           <View style={styles.stepContent}>
             <Text style={styles.stepTitle}>Pick a date & time</Text>
-            <Text style={styles.stepDesc}>Mon–Fri, 10:00 AM – 5:00 PM</Text>
+            <Text style={styles.stepDesc}>Mon–Fri, 11:00 AM – 5:00 PM · 30-minute appointments</Text>
 
             <Text style={styles.subTitle}>Available Dates</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dateScroll}>
@@ -322,15 +347,23 @@ export default function BookScreen() {
               <View style={{ marginTop: 20 }}>
                 <Text style={styles.subTitle}>Available Times</Text>
                 <View style={styles.timesGrid}>
-                  {TIMES.map((t) => {
+                  {slotsLoading ? (
+                    <View style={styles.slotsLoading}>
+                      <ActivityIndicator size="small" color={colors.primary} />
+                      <Text style={styles.slotsLoadingText}>Checking live availability…</Text>
+                    </View>
+                  ) : TIMES.map((t) => {
                     const active = time === t;
+                    const unavailable = slots[t] === false;
                     return (
                       <Pressable
                         key={t}
-                        style={[styles.timeBtn, active && { backgroundColor: colors.primary, borderColor: colors.primary }]}
+                        disabled={unavailable}
+                        style={[styles.timeBtn, unavailable && styles.timeBtnUnavailable, active && { backgroundColor: colors.primary, borderColor: colors.primary }]}
                         onPress={() => { setTime(t); Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); }}
                       >
-                        <Text style={[styles.timeBtnText, active && { color: "#fff" }]}>{t}</Text>
+                        <Text style={[styles.timeBtnText, unavailable && styles.timeBtnTextUnavailable, active && { color: "#fff" }]}>{t}</Text>
+                        {unavailable && <Text style={styles.bookedLabel}>Booked</Text>}
                       </Pressable>
                     );
                   })}
@@ -581,6 +614,11 @@ function makeStyles(colors: ReturnType<typeof useColors>, topPad: number, bottom
       backgroundColor: colors.card,
     },
     timeBtnText: { color: colors.foreground, fontFamily: "Inter_500Medium", fontSize: 13 },
+    timeBtnUnavailable: { backgroundColor: colors.muted, borderColor: colors.muted },
+    timeBtnTextUnavailable: { color: colors.mutedForeground, textDecorationLine: "line-through" },
+    bookedLabel: { color: colors.mutedForeground, fontFamily: "Inter_400Regular", fontSize: 9, marginTop: 2 },
+    slotsLoading: { flexDirection: "row", alignItems: "center", gap: 8, paddingVertical: 10 },
+    slotsLoadingText: { color: colors.mutedForeground, fontFamily: "Inter_400Regular", fontSize: 13 },
     formCard: {
       backgroundColor: colors.card,
       borderRadius: colors.radius,

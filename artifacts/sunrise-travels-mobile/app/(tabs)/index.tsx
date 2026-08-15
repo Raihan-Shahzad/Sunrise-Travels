@@ -17,6 +17,7 @@ import { useColors } from "@/hooks/useColors";
 const PHONE = "01582 732007";
 const PHONE_INTL = "+441582732007";
 const WHATSAPP = "441582732007";
+const MAKKAH_IMAGE = require("../../assets/makkah-kaaba.jpg");
 
 const SERVICES = [
   { icon: "send" as const, label: "Flights", desc: "Pakistan & worldwide fares", route: "/services" },
@@ -51,7 +52,11 @@ export default function HomeScreen() {
       showsVerticalScrollIndicator={false}
     >
       {/* Hero */}
-      <View style={styles.hero}>
+      <ImageBackground
+        source={MAKKAH_IMAGE}
+        style={styles.hero}
+        imageStyle={styles.heroImage}
+      >
         <View style={[styles.heroOverlay, { paddingTop: topPad + 20 }]}>
           <View style={styles.ratingBadge}>
             <Feather name="star" size={12} color={colors.accent} />
@@ -78,7 +83,7 @@ export default function HomeScreen() {
             </Pressable>
           </View>
         </View>
-      </View>
+      </ImageBackground>
 
       {/* Stats */}
       <View style={styles.statsRow}>
@@ -163,6 +168,7 @@ function makeStyles(colors: ReturnType<typeof useColors>, topPad: number, bottom
       height: 420,
       backgroundColor: "#0a1929",
     },
+    heroImage: { opacity: 0.9 },
     heroOverlay: {
       flex: 1,
       backgroundColor: "rgba(10,25,41,0.82)",

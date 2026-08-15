@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { ChevronRight, Star, Users, Clock } from "lucide-react";
 
+const ASSET_BASE = import.meta.env.BASE_URL;
+
 const highlights = [
   { icon: Star, text: "3, 4 & 5-Star packages" },
   { icon: Users, text: "Scholar-led groups" },
@@ -14,7 +16,7 @@ export default function UmrahPromoSection() {
       {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1565552643983-c65d9147a2b0?q=80&w=2000&auto=format&fit=crop')" }}
+        style={{ backgroundImage: `url('${ASSET_BASE}images/makkah-kaaba.jpg')` }}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-[#0D2B1D]/95 via-[#0D2B1D]/85 to-[#0D2B1D]/60" />
 

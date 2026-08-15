@@ -4,12 +4,14 @@ import { Phone, Star } from "lucide-react";
 import { PHONE, PHONE_INTL } from "@/lib/site-config";
 import { Link } from "wouter";
 
+const ASSET_BASE = import.meta.env.BASE_URL;
+
 export default function Hero() {
   return (
     <section className="relative h-[88vh] min-h-[640px] w-full bg-[#0D2B1D] flex items-center">
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1565552643983-c65d9147a2b0?q=80&w=2070&auto=format&fit=crop')" }}
+        style={{ backgroundImage: `url('${ASSET_BASE}images/makkah-kaaba.jpg')` }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-[#0D2B1D]/92 via-[#0D2B1D]/70 to-transparent" />
       </div>

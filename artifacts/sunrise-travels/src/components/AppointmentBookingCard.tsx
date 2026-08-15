@@ -16,7 +16,7 @@ const SERVICE_META: Record<Service, { label: string; color: string; bg: string; 
     activeText: "text-white",
   },
   visa: {
-    label: "Visa Assistance",
+    label: "Pakistani Visa Assistance",
     color: "text-emerald-700",
     bg: "bg-emerald-50",
     border: "border-emerald-100",
@@ -25,7 +25,7 @@ const SERVICE_META: Record<Service, { label: string; color: string; bg: string; 
     activeText: "text-white",
   },
   passport: {
-    label: "Passport Assistance",
+    label: "British & Pakistani Passport Assistance",
     color: "text-violet-700",
     bg: "bg-violet-50",
     border: "border-violet-100",
@@ -37,26 +37,19 @@ const SERVICE_META: Record<Service, { label: string; color: string; bg: string; 
 
 const SUBTYPES: Record<Service, string[]> = {
   nadra: [
-    "New NICOP Application",
-    "NICOP Renewal",
-    "NICOP Replacement (Lost/Damaged)",
-    "Pakistan Origin Card (POC)",
-    "Family Registration Certificate (FRC)",
+    "New NICOP / NICOP Renewal",
+    "Lost / Damaged NICOP Replacement",
     "Other NADRA Query",
   ],
   visa: [
-    "Tourist Visa Application",
-    "Family Visit Visa",
-    "Business Visa",
-    "Visa Renewal / Extension",
-    "Visa Enquiry / Consultation",
+    "New Visa / Renewal",
+    "Visa Extension",
+    "Other Visa Queries",
   ],
   passport: [
-    "New Passport Application",
-    "Passport Renewal",
-    "Lost or Damaged Passport",
-    "Urgent / Fast-Track Passport",
-    "Passport Consultation",
+    "New Passport / Passport Renewal",
+    "Lost / Damaged Passport Replacement",
+    "Other Passport Queries",
   ],
 };
 

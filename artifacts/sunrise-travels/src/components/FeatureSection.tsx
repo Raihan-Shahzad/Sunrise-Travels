@@ -7,9 +7,9 @@ const features = [
   { title: "Worldwide Flights", icon: Plane, description: "Competitive fares to every major global hub.", link: "/flights" },
   { title: "Hajj Packages", icon: BookOpen, description: "All-inclusive pilgrimage solutions.", link: "/hajj-umrah" },
   { title: "Umrah Packages", icon: Building2, description: "Flexible Umrah trips for families and groups.", link: "/hajj-umrah" },
-  { title: "NADRA Guidance", icon: FileCheck, description: "Expert help with NICOP, POC & FRC applications.", link: "/nadra-assistance" },
-  { title: "Visa Assistance", icon: FileText, description: "Step-by-step support for all Pakistani visas.", link: "/pakistani-visa-assistance" },
-  { title: "Passport Assistance", icon: Ticket, description: "Renew, replace or apply for new passports.", link: "/passport-assistance" },
+  { title: "NADRA Guidance", icon: FileCheck, description: "New or renewed NICOPs, lost or damaged replacements, and other queries.", link: "/nadra-assistance" },
+  { title: "Pakistani Visa Assistance", icon: FileText, description: "New visas, renewals, extensions, and other Pakistani visa queries.", link: "/pakistani-visa-assistance" },
+  { title: "British & Pakistani Passport Assistance", icon: Ticket, description: "New passports, renewals, lost or damaged replacements, and other queries.", link: "/passport-assistance" },
 ];
 
 const containerVariants = {

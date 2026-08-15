@@ -1,18 +1,20 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 
+const ASSET_BASE = import.meta.env.BASE_URL;
+
 const destinations = [
   {
     name: "Makkah",
     sub: "Saudi Arabia",
-    image: "https://images.unsplash.com/photo-1565552643983-c65d9147a2b0?q=80&w=800&auto=format&fit=crop",
+    image: `${ASSET_BASE}images/makkah-kaaba.jpg`,
     price: "Umrah from £850",
     link: "/hajj-umrah",
   },
   {
     name: "Madinah",
     sub: "Saudi Arabia",
-    image: "https://images.unsplash.com/photo-1591604130424-a8e22e50e8c6?q=80&w=800&auto=format&fit=crop",
+    image: `${ASSET_BASE}images/madinah-masjid-nabawi.jpg`,
     price: "Packages from £850",
     link: "/hajj-umrah",
   },

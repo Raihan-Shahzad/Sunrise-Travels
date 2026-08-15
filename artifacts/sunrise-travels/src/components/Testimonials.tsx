@@ -2,14 +2,16 @@ import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 
 const testimonials = [
-  { name: "Aisha Khan", rating: 5, text: "Sunrise Travels handled my Umrah from start to finish—no stress at all! The hotel was very close to the Haram.", date: "March 2024" },
-  { name: "Rashid Ahmed", rating: 5, text: "Great pricing on flights to Pakistan and the team helped with my NICOP renewal when I was struggling.", date: "May 2024" },
-  { name: "Sadia Ali", rating: 5, text: "Friendly staff, quick WhatsApp replies, and the visa help was spot-on. Highly recommended for families.", date: "February 2024" },
-  { name: "Tariq Mahmood", rating: 5, text: "Been using them for 10 years. Always the best prices for PIA and Emirates. Trustworthy brothers.", date: "April 2024" },
-  { name: "Fatima Noor", rating: 5, text: "Hajj 2023 was incredibly well organized. They guided us every step of the way. May Allah reward them.", date: "July 2023" },
+  { name: "Loves travel", rating: 5, text: "Excellent customer service! I've been using Sunrise Travel for the past five years.", date: "Google review" },
+  { name: "Ifzana Begum", rating: 5, text: "The staff were super-responsive, polite and extremely knowledgeable.", date: "Google review" },
+  { name: "Muhammad Hafeez", rating: 5, text: "I've been buying tickets from Sunrise Travels for 9 years now, and the team has always been very helpful.", date: "Google review" },
+  { name: "MUHAAMAD ALTAF", rating: 5, text: "Excellent service, very pleased with prices and staff is very cooperative. Highly recommended.", date: "Google review" },
+  { name: "Tabz Khan", rating: 5, text: "Cheap flights, help with NADRA ID cards and visas, and staff who are great help.", date: "Google review" },
+  { name: "Saqib Malik", rating: 5, text: "Excellent customer service. Helped me in finding the best flight deals.", date: "Google review" },
 ];
 
 const scrollItems = [...testimonials, ...testimonials];
+const GOOGLE_REVIEWS_URL = "https://www.google.com/maps/place/Sunrise+Travels+Centre+ltd/@51.8859051,-0.4320476,17z/data=!4m16!1m7!3m6!1s0x48764857d56874fd:0xdcb88ea4a349edc3!2sSunrise+Travels+Centre+ltd!8m2!3d51.8859018!4d-0.4294727!16s%2Fg%2F1w0h6_px!3m7!1s0x48764857d56874fd:0xdcb88ea4a349edc3!8m2!3d51.8859018!4d-0.4294727!9m1!1b1!16s%2Fg%2F1w0h6_px";
 
 export default function Testimonials() {
   return (
@@ -20,8 +22,11 @@ export default function Testimonials() {
           What Our Clients Say
         </h2>
         <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-          Don't just take our word for it. Read reviews from thousands of satisfied travelers and pilgrims.
+          Real feedback from our Google Business profile — 4.6/5 from 22 reviews.
         </p>
+        <a href={GOOGLE_REVIEWS_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-amber-400 text-sm font-semibold hover:text-amber-300">
+          Read all Google reviews <span aria-hidden="true">↗</span>
+        </a>
       </div>
 
       <div className="relative flex overflow-hidden">
