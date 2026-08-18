@@ -45,7 +45,7 @@ export default function Header() {
       {/* Main Nav */}
       <div className="container mx-auto flex items-center justify-between p-4">
         <Link href="/" className="flex items-center shrink-0">
-          <img src="/logo.jpg" alt="Sunrise Travels" className="h-14 md:h-16 w-auto" />
+          <img src="/logo.png" alt="Sunrise Travels" className="h-14 md:h-16 w-auto object-contain" />
         </Link>
 
         {/* Desktop Navigation */}
