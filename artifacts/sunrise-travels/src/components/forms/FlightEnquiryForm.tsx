@@ -1,45 +1,81 @@
 import { useState, useRef, useEffect } from "react";
 import {
   Plane, PlaneLanding, PlaneTakeoff, Users, CalendarDays,
-  User, Mail, Phone, ArrowRight, CheckCircle2, AlertCircle,
-  Loader2, ChevronDown, Plus, Minus,
+  User, Mail, Phone, ArrowRight, AlertCircle, Loader2, ChevronDown,
+  Plus, Minus, X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { WHATSAPP_NUMBER } from "@/lib/site-config";
 
-type TripType = "return" | "oneway";
-type FormState = "idle" | "loading" | "success";
+type TripType = "return" | "oneway" | "multicity";
+type FormState = "idle" | "loading";
 
 interface Pax { adults: number; children: number; infants: number }
+interface MultiCityLeg { from: string; to: string; date: string }
 interface Fields {
   from: string; to: string; depart: string; returnDate: string;
   name: string; email: string; phone: string;
 }
-interface Errors extends Partial<Record<keyof Fields | "passengers", string>> {}
+interface Errors extends Partial<Record<keyof Fields | "passengers", string>> {
+  multiCity?: Array<Partial<Record<keyof MultiCityLeg, string>>>;
+}
 
 const EMPTY_FIELDS: Fields = { from: "", to: "", depart: "", returnDate: "", name: "", email: "", phone: "" };
 const EMPTY_PAX: Pax = { adults: 1, children: 0, infants: 0 };
+const EMPTY_MULTI_CITY: MultiCityLeg[] = [
+  { from: "", to: "", date: "" },
+  { from: "", to: "", date: "" },
+];
 
-function validate(fields: Fields, tripType: TripType, pax: Pax): Errors {
+function isValidEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(email.trim());
+}
+
+function isValidUkPhone(phone: string) {
+  const compact = phone.replace(/[()\s.-]/g, "");
+  return /^(?:0\d{10}|\+44\d{10})$/.test(compact);
+}
+
+function validate(fields: Fields, tripType: TripType, pax: Pax, multiCityLegs: MultiCityLeg[]): Errors {
   const e: Errors = {};
-  if (!fields.from.trim()) e.from = "Departure city or airport required";
-  if (!fields.to.trim()) e.to = "Destination required";
-  if (!fields.depart) {
-    e.depart = "Departure date required";
-  } else if (new Date(fields.depart) < new Date(new Date().toDateString())) {
-    e.depart = "Must be today or later";
-  }
-  if (tripType === "return") {
-    if (!fields.returnDate) e.returnDate = "Return date required";
-    else if (fields.depart && new Date(fields.returnDate) <= new Date(fields.depart))
-      e.returnDate = "Must be after departure";
+  const today = new Date(new Date().toDateString());
+
+  if (tripType === "multicity") {
+    e.multiCity = multiCityLegs.map((leg, index) => {
+      const legErrors: Partial<Record<keyof MultiCityLeg, string>> = {};
+      if (!leg.from.trim()) legErrors.from = "Departure city or airport required";
+      if (!leg.to.trim()) legErrors.to = "Destination required";
+      if (!leg.date) {
+        legErrors.date = "Date required";
+      } else if (new Date(leg.date) < today) {
+        legErrors.date = "Must be today or later";
+      } else if (index > 0 && multiCityLegs[index - 1].date && new Date(leg.date) < new Date(multiCityLegs[index - 1].date)) {
+        legErrors.date = "Must be on or after the previous leg";
+      }
+      return legErrors;
+    });
+    if (e.multiCity.every((leg) => Object.keys(leg).length === 0)) delete e.multiCity;
+  } else {
+    if (!fields.from.trim()) e.from = "Departure city or airport required";
+    if (!fields.to.trim()) e.to = "Destination required";
+    if (!fields.depart) {
+      e.depart = "Departure date required";
+    } else if (new Date(fields.depart) < today) {
+      e.depart = "Must be today or later";
+    }
+    if (tripType === "return") {
+      if (!fields.returnDate) e.returnDate = "Return date required";
+      else if (fields.depart && new Date(fields.returnDate) <= new Date(fields.depart))
+        e.returnDate = "Must be after departure";
+    }
   }
   if (pax.adults + pax.children + pax.infants < 1) e.passengers = "Add at least 1 passenger";
   if (pax.infants > pax.adults) e.passengers = "Infants cannot exceed adults";
   if (!fields.name.trim()) e.name = "Full name required";
   if (!fields.email.trim()) e.email = "Email required";
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email)) e.email = "Enter a valid email";
+  else if (!isValidEmail(fields.email)) e.email = "Enter a valid email address";
   if (!fields.phone.trim()) e.phone = "Phone required";
-  else if (!/^[\d\s+\-()\\.]{7,15}$/.test(fields.phone.trim())) e.phone = "Enter a valid number";
+  else if (!isValidUkPhone(fields.phone)) e.phone = "Enter a valid UK number, e.g. 01582 732007";
   return e;
 }
 
@@ -193,6 +229,7 @@ export default function FlightEnquiryForm() {
   const [tripType, setTripType] = useState<TripType>("return");
   const [fields, setFields] = useState<Fields>(EMPTY_FIELDS);
   const [pax, setPax] = useState<Pax>(EMPTY_PAX);
+  const [multiCityLegs, setMultiCityLegs] = useState<MultiCityLeg[]>(EMPTY_MULTI_CITY);
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState<Set<keyof Fields | "passengers">>(new Set());
   const [formState, setFormState] = useState<FormState>("idle");
@@ -202,48 +239,62 @@ export default function FlightEnquiryForm() {
   function setField(k: keyof Fields, v: string) {
     const next = { ...fields, [k]: v };
     setFields(next);
-    if (touched.has(k)) setErrors(validate(next, tripType, pax));
+    if (touched.has(k)) setErrors(validate(next, tripType, pax, multiCityLegs));
   }
 
   function touchField(k: keyof Fields) {
     setTouched((prev) => new Set([...prev, k]));
-    setErrors(validate(fields, tripType, pax));
+    setErrors(validate(fields, tripType, pax, multiCityLegs));
   }
 
   function handlePaxChange(p: Pax) {
     setPax(p);
-    if (touched.has("passengers")) setErrors(validate(fields, tripType, p));
+    if (touched.has("passengers")) setErrors(validate(fields, tripType, p, multiCityLegs));
+  }
+
+  function updateMultiCityLeg(index: number, key: keyof MultiCityLeg, value: string) {
+    const next = multiCityLegs.map((leg, i) => i === index ? { ...leg, [key]: value } : leg);
+    setMultiCityLegs(next);
+    if (tripType === "multicity" && errors.multiCity) setErrors(validate(fields, tripType, pax, next));
+  }
+
+  function addMultiCityLeg() {
+    if (multiCityLegs.length < 4) setMultiCityLegs([...multiCityLegs, { from: "", to: "", date: "" }]);
+  }
+
+  function removeMultiCityLeg(index: number) {
+    if (multiCityLegs.length <= 2) return;
+    const next = multiCityLegs.filter((_, i) => i !== index);
+    setMultiCityLegs(next);
+    setErrors(validate(fields, tripType, pax, next));
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const allKeys = [...Object.keys(EMPTY_FIELDS), "passengers"] as (keyof Fields | "passengers")[];
     setTouched(new Set(allKeys));
-    const errs = validate(fields, tripType, pax);
+    const errs = validate(fields, tripType, pax, multiCityLegs);
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
     setFormState("loading");
-    setTimeout(() => setFormState("success"), 1200);
-  }
-
-  if (formState === "success") {
-    return (
-      <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-8 text-center">
-        <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
-          <CheckCircle2 className="w-8 h-8 text-green-600" />
-        </div>
-        <h3 className="font-heading text-xl font-bold text-slate-900 mb-2">Quote Request Sent!</h3>
-        <p className="text-slate-600 text-sm leading-relaxed mb-6">
-          Thanks, <strong>{fields.name.split(" ")[0]}</strong>! We'll contact you within 2 hours on <strong>{fields.email}</strong> or by calling <strong>{fields.phone}</strong>.
-        </p>
-        <button
-          onClick={() => { setFormState("idle"); setFields(EMPTY_FIELDS); setPax(EMPTY_PAX); setTouched(new Set()); setErrors({}); }}
-          className="text-sm text-primary font-semibold hover:underline"
-        >
-          Submit another enquiry
-        </button>
-      </div>
-    );
+    const itinerary = tripType === "multicity"
+      ? multiCityLegs.map((leg, i) => `Leg ${i + 1}: ${leg.from} to ${leg.to} on ${leg.date}`).join("\n")
+      : `From: ${fields.from}\nTo: ${fields.to}\nDeparture: ${fields.depart}${tripType === "return" ? `\nReturn: ${fields.returnDate}` : ""}`;
+    const message = [
+      "Hello Sunrise Travels, I would like a flight quote.",
+      "",
+      `Trip type: ${tripType === "return" ? "Return" : tripType === "oneway" ? "One-way" : "Multi-city"}`,
+      itinerary,
+      `Passengers: ${pax.adults} adult(s), ${pax.children} child(ren), ${pax.infants} infant(s)`,
+      "",
+      "My details:",
+      `Name: ${fields.name}`,
+      `Email: ${fields.email}`,
+      `Phone: ${fields.phone}`,
+      "",
+      "Please share your best available fare. Thank you.",
+    ].join("\n");
+    window.location.assign(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`);
   }
 
   return (
@@ -253,50 +304,91 @@ export default function FlightEnquiryForm() {
           <Plane className="w-5 h-5 text-white" />
           <h3 className="font-heading text-lg font-bold text-white">Request a Flight Quote</h3>
         </div>
-        <p className="text-primary-100 text-sm">Free · No obligation · Response within 2 hours</p>
+        <p className="text-primary-100 text-sm">Free · No obligation · Opens WhatsApp with your quote details ready</p>
       </div>
 
       <div className="px-6 pt-5 pb-2">
-        <div className="inline-flex bg-slate-100 rounded-xl p-1 gap-1">
-          {(["return", "oneway"] as TripType[]).map((t) => (
+        <div className="flex flex-wrap bg-slate-100 rounded-xl p-1 gap-1">
+          {(["return", "oneway", "multicity"] as TripType[]).map((t) => (
             <button
               key={t} type="button"
               onClick={() => { setTripType(t); setErrors({}); }}
               className={cn(
-                "px-4 py-2 rounded-lg text-sm font-semibold transition-all",
+                "px-3 py-2 rounded-lg text-sm font-semibold transition-all",
                 tripType === t ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-700"
               )}
             >
-              {t === "return" ? "↩ Return" : "→ One-way"}
+              {t === "return" ? "↩ Return" : t === "oneway" ? "→ One-way" : "⇄ Multi-city"}
             </button>
           ))}
         </div>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="px-6 pb-6 pt-4 space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <FieldLabel>From</FieldLabel>
-            <Field icon={PlaneTakeoff} placeholder="e.g. London LHR" value={fields.from} onChange={(v) => setField("from", v)} onBlur={() => touchField("from")} error={errors.from} />
+        {tripType === "multicity" ? (
+          <div className="space-y-3">
+            {multiCityLegs.map((leg, index) => {
+              const legErrors = errors.multiCity?.[index];
+              return (
+                <div key={index} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Flight {index + 1}</p>
+                    {multiCityLegs.length > 2 && (
+                      <button type="button" onClick={() => removeMultiCityLeg(index)} className="text-slate-400 hover:text-red-600" aria-label={`Remove flight ${index + 1}`}>
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <FieldLabel>From</FieldLabel>
+                      <Field icon={PlaneTakeoff} placeholder="e.g. London LHR" value={leg.from} onChange={(v) => updateMultiCityLeg(index, "from", v)} error={legErrors?.from} />
+                    </div>
+                    <div>
+                      <FieldLabel>To</FieldLabel>
+                      <Field icon={PlaneLanding} placeholder="e.g. Islamabad ISB" value={leg.to} onChange={(v) => updateMultiCityLeg(index, "to", v)} error={legErrors?.to} />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <FieldLabel>Date</FieldLabel>
+                    <Field icon={CalendarDays} placeholder="Travel date" type="date" min={today} value={leg.date} onChange={(v) => updateMultiCityLeg(index, "date", v)} error={legErrors?.date} />
+                  </div>
+                </div>
+              );
+            })}
+            {multiCityLegs.length < 4 && (
+              <button type="button" onClick={addMultiCityLeg} className="w-full border border-dashed border-primary/50 text-primary rounded-xl py-2.5 text-sm font-semibold hover:bg-primary/5 transition-colors">
+                <Plus className="w-4 h-4 inline mr-1.5" /> Add another city
+              </button>
+            )}
           </div>
-          <div>
-            <FieldLabel>To</FieldLabel>
-            <Field icon={PlaneLanding} placeholder="e.g. Islamabad ISB" value={fields.to} onChange={(v) => setField("to", v)} onBlur={() => touchField("to")} error={errors.to} />
-          </div>
-        </div>
-
-        <div className={cn("grid gap-3", tripType === "return" ? "grid-cols-2" : "grid-cols-1")}>
-          <div>
-            <FieldLabel>Departure Date</FieldLabel>
-            <Field icon={CalendarDays} placeholder="Depart" type="date" min={today} value={fields.depart} onChange={(v) => setField("depart", v)} onBlur={() => touchField("depart")} error={errors.depart} />
-          </div>
-          {tripType === "return" && (
-            <div>
-              <FieldLabel>Return Date</FieldLabel>
-              <Field icon={CalendarDays} placeholder="Return" type="date" min={fields.depart || today} value={fields.returnDate} onChange={(v) => setField("returnDate", v)} onBlur={() => touchField("returnDate")} error={errors.returnDate} />
+        ) : (
+          <>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <FieldLabel>From</FieldLabel>
+                <Field icon={PlaneTakeoff} placeholder="e.g. London LHR" value={fields.from} onChange={(v) => setField("from", v)} onBlur={() => touchField("from")} error={errors.from} />
+              </div>
+              <div>
+                <FieldLabel>To</FieldLabel>
+                <Field icon={PlaneLanding} placeholder="e.g. Islamabad ISB" value={fields.to} onChange={(v) => setField("to", v)} onBlur={() => touchField("to")} error={errors.to} />
+              </div>
             </div>
-          )}
-        </div>
+
+            <div className={cn("grid gap-3", tripType === "return" ? "grid-cols-2" : "grid-cols-1")}>
+              <div>
+                <FieldLabel>Departure Date</FieldLabel>
+                <Field icon={CalendarDays} placeholder="Depart" type="date" min={today} value={fields.depart} onChange={(v) => setField("depart", v)} onBlur={() => touchField("depart")} error={errors.depart} />
+              </div>
+              {tripType === "return" && (
+                <div>
+                  <FieldLabel>Return Date</FieldLabel>
+                  <Field icon={CalendarDays} placeholder="Return" type="date" min={fields.depart || today} value={fields.returnDate} onChange={(v) => setField("returnDate", v)} onBlur={() => touchField("returnDate")} error={errors.returnDate} />
+                </div>
+              )}
+            </div>
+          </>
+        )}
 
         <div>
           <FieldLabel>Passengers</FieldLabel>
@@ -322,7 +414,7 @@ export default function FlightEnquiryForm() {
           </div>
           <div>
             <FieldLabel>Phone</FieldLabel>
-            <Field icon={Phone} placeholder="+44 7700 000000" type="tel" value={fields.phone} onChange={(v) => setField("phone", v)} onBlur={() => touchField("phone")} error={errors.phone} />
+              <Field icon={Phone} placeholder="01582 732007 or +44 7700 000000" type="tel" value={fields.phone} onChange={(v) => setField("phone", v)} onBlur={() => touchField("phone")} error={errors.phone} />
           </div>
         </div>
 
@@ -332,8 +424,8 @@ export default function FlightEnquiryForm() {
           className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent/90 disabled:opacity-70 text-white font-bold py-3.5 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-[0.98] mt-2"
         >
           {formState === "loading"
-            ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</>
-            : <>Get Best Price <ArrowRight className="w-4 h-4" /></>}
+            ? <><Loader2 className="w-4 h-4 animate-spin" /> Opening WhatsApp…</>
+            : <>Get Best Price on WhatsApp <ArrowRight className="w-4 h-4" /></>}
         </button>
       </form>
     </div>
