@@ -113,6 +113,61 @@ function Field({ icon: Icon, placeholder, type = "text", value, onChange, error,
   );
 }
 
+function DateField({ label, value, min, error, onChange, onBlur, placeholder }: {
+  label: string;
+  value: string;
+  min?: string;
+  error?: string;
+  onChange: (value: string) => void;
+  onBlur?: () => void;
+  placeholder: string;
+}) {
+  const formattedDate = value
+    ? new Date(`${value}T12:00:00`).toLocaleDateString("en-GB", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : placeholder;
+
+  return (
+    <div>
+      <FieldLabel>{label}</FieldLabel>
+      <div className={cn(
+        "relative flex items-center gap-3 rounded-xl border px-3.5 py-2.5 transition-all overflow-hidden",
+        error
+          ? "border-red-400 bg-red-50/40"
+          : "border-slate-200 bg-slate-50 hover:border-primary/40 hover:bg-white focus-within:border-primary focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/10"
+      )}>
+        <span className={cn(
+          "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+          error ? "bg-red-100 text-red-500" : "bg-primary/10 text-primary"
+        )}>
+          <CalendarDays className="w-4 h-4" />
+        </span>
+        <span className={cn(
+          "flex-1 text-sm font-medium",
+          value ? "text-slate-800" : "text-slate-400"
+        )}>
+          {formattedDate}
+        </span>
+        <ChevronDown className="w-4 h-4 shrink-0 text-slate-400" />
+        <input
+          type="date"
+          min={min}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={onBlur}
+          aria-label={label}
+          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+        />
+      </div>
+      <FieldError msg={error} />
+    </div>
+  );
+}
+
 function PaxRow({ label, sub, value, min, max, onChange }: {
   label: string; sub: string; value: number; min: number; max: number; onChange: (n: number) => void;
 }) {
@@ -350,8 +405,14 @@ export default function FlightEnquiryForm() {
                     </div>
                   </div>
                   <div className="mt-3">
-                    <FieldLabel>Date</FieldLabel>
-                    <Field icon={CalendarDays} placeholder="Travel date" type="date" min={today} value={leg.date} onChange={(v) => updateMultiCityLeg(index, "date", v)} error={legErrors?.date} />
+                    <DateField
+                      label="Date"
+                      placeholder="Choose travel date"
+                      min={today}
+                      value={leg.date}
+                      onChange={(v) => updateMultiCityLeg(index, "date", v)}
+                      error={legErrors?.date}
+                    />
                   </div>
                 </div>
               );
@@ -377,13 +438,27 @@ export default function FlightEnquiryForm() {
 
             <div className={cn("grid gap-3", tripType === "return" ? "grid-cols-2" : "grid-cols-1")}>
               <div>
-                <FieldLabel>Departure Date</FieldLabel>
-                <Field icon={CalendarDays} placeholder="Depart" type="date" min={today} value={fields.depart} onChange={(v) => setField("depart", v)} onBlur={() => touchField("depart")} error={errors.depart} />
+                <DateField
+                  label="Departure Date"
+                  placeholder="Choose departure date"
+                  min={today}
+                  value={fields.depart}
+                  onChange={(v) => setField("depart", v)}
+                  onBlur={() => touchField("depart")}
+                  error={errors.depart}
+                />
               </div>
               {tripType === "return" && (
                 <div>
-                  <FieldLabel>Return Date</FieldLabel>
-                  <Field icon={CalendarDays} placeholder="Return" type="date" min={fields.depart || today} value={fields.returnDate} onChange={(v) => setField("returnDate", v)} onBlur={() => touchField("returnDate")} error={errors.returnDate} />
+                  <DateField
+                    label="Return Date"
+                    placeholder="Choose return date"
+                    min={fields.depart || today}
+                    value={fields.returnDate}
+                    onChange={(v) => setField("returnDate", v)}
+                    onBlur={() => touchField("returnDate")}
+                    error={errors.returnDate}
+                  />
                 </div>
               )}
             </div>
