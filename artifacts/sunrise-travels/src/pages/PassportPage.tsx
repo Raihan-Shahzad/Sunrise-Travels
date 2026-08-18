@@ -39,7 +39,7 @@ export default function PassportPage() {
               <div>
                 <h3 className="font-bold text-amber-900 mb-1">Important Notice</h3>
                 <p className="text-amber-800 text-sm leading-relaxed">
-                  Sunrise Travels does <strong>not</strong> submit or process passport applications on your behalf. We provide guidance, consultation, and document preparation assistance only.
+                  Sunrise Travels does <strong>not</strong> process passport applications on your behalf. We provide guidance, consultation, and document preparation assistance only.
                 </p>
               </div>
             </div>

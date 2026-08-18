@@ -39,6 +39,8 @@ const SUBTYPES: Record<Service, string[]> = {
   nadra: [
     "New NICOP / NICOP Renewal",
     "Lost / Damaged NICOP Replacement",
+    "FRC Certificate",
+    "POC Card",
     "Other NADRA Query",
   ],
   visa: [

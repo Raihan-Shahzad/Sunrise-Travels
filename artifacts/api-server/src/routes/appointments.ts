@@ -10,6 +10,8 @@ const SERVICE_OPTIONS = {
   nadra: [
     "New NICOP / NICOP Renewal",
     "Lost / Damaged NICOP Replacement",
+    "FRC Certificate",
+    "POC Card",
     "Other NADRA Query",
   ],
   visa: ["New Visa / Renewal", "Visa Extension", "Other Visa Queries"],
@@ -43,6 +45,10 @@ router.post("/appointments", async (req, res) => {
     const options = SERVICE_OPTIONS[data.service];
     if (!options.includes(data.subService as never)) {
       res.status(400).json({ error: "Please choose a valid appointment type." });
+      return;
+    }
+    if (data.subService.startsWith("Other ") && !data.notes?.trim()) {
+      res.status(400).json({ error: "Please describe what you need help with." });
       return;
     }
     if (!APPOINTMENT_TIMES.includes(data.appointmentTime)) {
@@ -84,6 +90,7 @@ router.post("/appointments", async (req, res) => {
         fullName: created.fullName,
         email: created.email,
         phone: created.phone,
+        notes: created.notes,
       },
       "New appointment booked — staff notification",
     );

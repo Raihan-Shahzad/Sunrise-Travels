@@ -53,7 +53,7 @@ export default function NADRAPage() {
               <div>
                 <h3 className="font-bold text-amber-900 mb-1">Important Notice</h3>
                 <p className="text-amber-800 text-sm leading-relaxed">
-                  Sunrise Travels does <strong>not</strong> submit or process government applications on your behalf. We provide guidance, consultation, and document preparation assistance only. All decisions rest with the relevant government authorities.
+                  Sunrise Travels does <strong>not</strong> process NADRA applications on your behalf. We provide guidance, consultation, and document preparation assistance only.
                 </p>
               </div>
             </div>

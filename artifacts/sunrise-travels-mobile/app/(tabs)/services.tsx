@@ -63,6 +63,8 @@ const SERVICES: Record<ServiceKey, {
     highlights: [
       "New NICOP / NICOP Renewal",
       "Lost / Damaged NICOP Replacement",
+      "FRC Certificate",
+      "POC Card",
       "Other NADRA Query",
     ],
   },

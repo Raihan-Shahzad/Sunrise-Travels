@@ -23,6 +23,8 @@ const SERVICES: Record<ServiceType, { label: string; subtypes: string[] }> = {
     subtypes: [
       "New NICOP / NICOP Renewal",
       "Lost / Damaged NICOP Replacement",
+      "FRC Certificate",
+      "POC Card",
       "Other NADRA Query",
     ],
   },
@@ -102,10 +104,15 @@ export default function BookScreen() {
 
   const dates = getAvailableDates(14);
   const selectedDate = dates.find((d) => formatDateKey(d) === dateKey);
+  const requiresQueryDescription = subService.startsWith("Other ");
 
   const canNext0 = !!service && !!subService;
   const canNext1 = !!dateKey && !!time;
-  const canNext2 = name.trim().length > 0 && email.trim().length > 0 && phone.trim().length > 0;
+  const canNext2 =
+    name.trim().length > 0 &&
+    email.trim().length > 0 &&
+    phone.trim().length > 0 &&
+    (!requiresQueryDescription || notes.trim().length > 0);
 
   const styles = makeStyles(colors, topPad, bottomPad);
   const domain = process.env.EXPO_PUBLIC_DOMAIN;
@@ -415,10 +422,12 @@ export default function BookScreen() {
                 />
               </View>
               <View style={styles.formField}>
-                <Text style={styles.fieldLabel}>Additional Notes (optional)</Text>
+                <Text style={styles.fieldLabel}>
+                  {requiresQueryDescription ? "What do you need help with? *" : "Additional Notes (optional)"}
+                </Text>
                 <TextInput
                   style={[styles.input, styles.textarea]}
-                  placeholder="Any context or questions for us..."
+                  placeholder={requiresQueryDescription ? "Briefly describe your query..." : "Any context or questions for us..."}
                   placeholderTextColor={colors.mutedForeground}
                   value={notes}
                   onChangeText={setNotes}
@@ -426,6 +435,9 @@ export default function BookScreen() {
                   numberOfLines={3}
                   textAlignVertical="top"
                 />
+                {requiresQueryDescription ? (
+                  <Text style={styles.fieldHint}>Please describe what you need help with so we can prepare for your appointment.</Text>
+                ) : null}
               </View>
             </View>
           </View>
@@ -445,7 +457,7 @@ export default function BookScreen() {
               <SummaryRow label="Name" value={name} />
               <SummaryRow label="Email" value={email} />
               <SummaryRow label="Phone" value={phone} />
-              {notes ? <SummaryRow label="Notes" value={notes} /> : null}
+              {notes ? <SummaryRow label={requiresQueryDescription ? "Query description" : "Notes"} value={notes} /> : null}
             </View>
 
             <View style={styles.noticeBanner}>
@@ -629,6 +641,7 @@ function makeStyles(colors: ReturnType<typeof useColors>, topPad: number, bottom
     },
     formField: { marginBottom: 14 },
     fieldLabel: { color: colors.foreground, fontFamily: "Inter_500Medium", fontSize: 13, marginBottom: 6 },
+    fieldHint: { color: colors.mutedForeground, fontFamily: "Inter_400Regular", fontSize: 11, lineHeight: 16, marginTop: 5 },
     input: {
       borderWidth: 1,
       borderColor: colors.input,

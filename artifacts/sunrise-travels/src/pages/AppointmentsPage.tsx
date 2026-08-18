@@ -29,6 +29,8 @@ const SERVICES = {
     subtypes: [
         "New NICOP / NICOP Renewal",
         "Lost / Damaged NICOP Replacement",
+        "FRC Certificate",
+        "POC Card",
         "Other NADRA Query",
     ],
   },
@@ -108,10 +110,15 @@ export default function AppointmentsPage() {
 
   const dates = getAvailableDates(14);
   const selectedDate = dates.find((d) => formatDateKey(d) === dateKey);
+  const requiresQueryDescription = subService.startsWith("Other ");
 
   const canNextStep1 = !!service && !!subService;
   const canNextStep2 = !!dateKey && !!time;
-  const canNextStep3 = !!name.trim() && !!email.trim() && !!phone.trim();
+  const canNextStep3 =
+    !!name.trim() &&
+    !!email.trim() &&
+    !!phone.trim() &&
+    (!requiresQueryDescription || !!notes.trim());
 
   useEffect(() => {
     if (!dateKey) {
@@ -440,13 +447,19 @@ export default function AppointmentsPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Additional Notes (optional)</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                    {requiresQueryDescription ? "What do you need help with? *" : "Additional Notes (optional)"}
+                  </label>
                   <Textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Any additional context or questions for us..."
-                    className="min-h-[80px]"
+                    placeholder={requiresQueryDescription ? "Briefly describe your query..." : "Any additional context or questions for us..."}
+                    className="min-h-[80px] max-h-28"
+                    required={requiresQueryDescription}
                   />
+                  {requiresQueryDescription && (
+                    <p className="text-xs text-slate-500 mt-1.5">Please describe what you need help with so we can prepare for your appointment.</p>
+                  )}
                 </div>
               </div>
 
@@ -479,7 +492,14 @@ export default function AppointmentsPage() {
                   <SummaryItem icon={<User className="w-4 h-4" />} label="Name" value={name} />
                   <SummaryItem icon={<User className="w-4 h-4" />} label="Email" value={email} />
                   <SummaryItem icon={<User className="w-4 h-4" />} label="Phone" value={phone} />
-                  {notes && <SummaryItem icon={<FileText className="w-4 h-4" />} label="Notes" value={notes} className="sm:col-span-2" />}
+                  {notes && (
+                    <SummaryItem
+                      icon={<FileText className="w-4 h-4" />}
+                      label={requiresQueryDescription ? "Query description" : "Notes"}
+                      value={notes}
+                      className="sm:col-span-2"
+                    />
+                  )}
                 </div>
                 <div className="px-8 pb-6">
                   <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-sm text-amber-800">
