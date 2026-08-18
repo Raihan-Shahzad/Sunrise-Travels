@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import {
   Plane, PlaneLanding, PlaneTakeoff, Users, CalendarDays,
   User, Mail, Phone, ArrowRight, AlertCircle, Loader2, ChevronDown,
-  Plus, Minus, X,
+  Plus, Minus, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { WHATSAPP_NUMBER } from "@/lib/site-config";
@@ -122,8 +122,44 @@ function DateField({ label, value, min, error, onChange, onBlur, placeholder }: 
   onBlur?: () => void;
   placeholder: string;
 }) {
+  const [open, setOpen] = useState(false);
+  const initialDate = value || min || new Date().toISOString().slice(0, 10);
+  const [viewMonth, setViewMonth] = useState(() => {
+    const [year, month] = initialDate.split("-").map(Number);
+    return new Date(year, month - 1, 1);
+  });
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function closeOnOutsideClick(event: MouseEvent) {
+      if (pickerRef.current && !pickerRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", closeOnOutsideClick);
+    return () => document.removeEventListener("mousedown", closeOnOutsideClick);
+  }, [open]);
+
+  useEffect(() => {
+    if (!value) return;
+    const [year, month] = value.split("-").map(Number);
+    setViewMonth(new Date(year, month - 1, 1));
+  }, [value]);
+
+  const minDate = min ? new Date(`${min}T00:00:00`) : null;
+  const selectedDate = value ? new Date(`${value}T12:00:00`) : null;
+  const monthLabel = viewMonth.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  const monthStartDay = (viewMonth.getDay() + 6) % 7;
+  const daysInMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 0).getDate();
+  const todayKey = new Date().toISOString().slice(0, 10);
+  const previousMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1);
+  const previousMonthDisabled = minDate
+    ? previousMonth < new Date(minDate.getFullYear(), minDate.getMonth(), 1)
+    : false;
+
   const formattedDate = value
-    ? new Date(`${value}T12:00:00`).toLocaleDateString("en-GB", {
+    ? selectedDate!.toLocaleDateString("en-GB", {
         weekday: "short",
         day: "numeric",
         month: "short",
@@ -132,14 +168,22 @@ function DateField({ label, value, min, error, onChange, onBlur, placeholder }: 
     : placeholder;
 
   return (
-    <div>
+    <div ref={pickerRef} className="relative">
       <FieldLabel>{label}</FieldLabel>
-      <div className={cn(
-        "relative flex items-center gap-3 rounded-xl border px-3.5 py-2.5 transition-all overflow-hidden",
-        error
-          ? "border-red-400 bg-red-50/40"
-          : "border-slate-200 bg-slate-50 hover:border-primary/40 hover:bg-white focus-within:border-primary focus-within:bg-white focus-within:ring-2 focus-within:ring-primary/10"
-      )}>
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+        aria-haspopup="dialog"
+        className={cn(
+          "relative w-full flex items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition-all",
+          error
+            ? "border-red-400 bg-red-50/40"
+            : open
+              ? "border-primary bg-white ring-2 ring-primary/10"
+              : "border-slate-200 bg-slate-50 hover:border-primary/40 hover:bg-white"
+        )}
+      >
         <span className={cn(
           "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
           error ? "bg-red-100 text-red-500" : "bg-primary/10 text-primary"
@@ -152,17 +196,83 @@ function DateField({ label, value, min, error, onChange, onBlur, placeholder }: 
         )}>
           {formattedDate}
         </span>
-        <ChevronDown className="w-4 h-4 shrink-0 text-slate-400" />
-        <input
-          type="date"
-          min={min}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={onBlur}
-          aria-label={label}
-          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-        />
-      </div>
+        <ChevronDown className={cn("w-4 h-4 shrink-0 text-slate-400 transition-transform", open && "rotate-180")} />
+      </button>
+      {open && (
+        <div
+          role="dialog"
+          aria-label={`${label} calendar`}
+          className="absolute left-0 top-full z-50 mt-2 w-[min(19rem,calc(100vw-3rem))] rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <button
+              type="button"
+              onClick={() => setViewMonth(previousMonth)}
+              disabled={previousMonthDisabled}
+              aria-label="Previous month"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <div className="text-center">
+              <p className="text-sm font-bold text-slate-900">{monthLabel}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">Select a date</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 1))}
+              aria-label="Next month"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="grid grid-cols-7 gap-1 text-center">
+            {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day) => (
+              <span key={day} className="py-1 text-[10px] font-bold uppercase tracking-wide text-slate-400">{day}</span>
+            ))}
+            {Array.from({ length: monthStartDay }).map((_, index) => (
+              <span key={`empty-${index}`} className="h-9" aria-hidden="true" />
+            ))}
+            {Array.from({ length: daysInMonth }, (_, index) => {
+              const day = index + 1;
+              const date = new Date(viewMonth.getFullYear(), viewMonth.getMonth(), day);
+              const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+              const disabled = !!minDate && date < minDate;
+              const selected = dateKey === value;
+              const today = dateKey === todayKey;
+              return (
+                <button
+                  key={dateKey}
+                  type="button"
+                  disabled={disabled}
+                  onClick={() => {
+                    onChange(dateKey);
+                    onBlur?.();
+                    setOpen(false);
+                  }}
+                  className={cn(
+                    "relative h-9 rounded-lg text-sm font-medium transition-all",
+                    disabled
+                      ? "cursor-not-allowed text-slate-300"
+                      : selected
+                        ? "bg-primary text-white shadow-md shadow-primary/25"
+                        : "text-slate-700 hover:bg-primary/10 hover:text-primary",
+                    today && !selected && "font-bold text-primary"
+                  )}
+                  aria-label={date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}
+                >
+                  {day}
+                  {today && !selected && <span className="absolute bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-primary" />}
+                </button>
+              );
+            })}
+          </div>
+          <div className="mt-3 border-t border-slate-100 pt-3 text-center text-xs text-slate-400">
+            {selectedDate ? `Selected: ${formattedDate}` : "Choose your travel date"}
+          </div>
+        </div>
+      )}
       <FieldError msg={error} />
     </div>
   );
