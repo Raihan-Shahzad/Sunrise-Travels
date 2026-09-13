@@ -1,0 +1,1 @@
+- [Metro image-size compatibility](metro-image-size-compatibility.md) — Keep Metro 0.83 on image-size 1.x; image-size 2.x breaks Metro asset paths.
