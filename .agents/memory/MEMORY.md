@@ -1,1 +1,2 @@
 - [Metro image-size compatibility](metro-image-size-compatibility.md) — Keep Metro 0.83 on image-size 1.x; image-size 2.x breaks Metro asset paths.
+- [Appointment calendar sync](appointment-calendar-sync.md) — Keep bookings in the dedicated Sunrise Travels calendar, separate from personal calendars.

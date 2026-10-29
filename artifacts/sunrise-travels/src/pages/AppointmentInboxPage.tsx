@@ -21,7 +21,7 @@ type Appointment = {
 const labels = {
   nadra: "NADRA Assistance",
   visa: "Pakistani Visa Assistance",
-  passport: "British & Pakistani Passport Assistance",
+  passport: "Passport Assistance",
 };
 
 export default function AppointmentInboxPage() {

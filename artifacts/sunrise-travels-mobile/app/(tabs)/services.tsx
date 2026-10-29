@@ -79,9 +79,9 @@ const SERVICES: Record<ServiceKey, {
   passport: {
     icon: "book",
     color: "#DC2626",
-    title: "Passport Help",
-    subtitle: "British & Pakistani Passports",
-    description: "Stress-free British and Pakistani passport guidance from application to replacement.",
+    title: "Passport Assistance",
+    subtitle: "Applications & Renewals",
+    description: "Stress-free passport guidance from application to replacement.",
     highlights: ["New Passport / Passport Renewal", "Lost / Damaged Passport Replacement", "Other Passport Queries"],
   },
 };

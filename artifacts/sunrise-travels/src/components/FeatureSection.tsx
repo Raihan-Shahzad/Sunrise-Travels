@@ -9,7 +9,7 @@ const features = [
   { title: "Umrah Packages", icon: Building2, description: "Flexible Umrah trips for families and groups.", link: "/hajj-umrah" },
   { title: "NADRA Guidance", icon: FileCheck, description: "New or renewed NICOPs, lost or damaged replacements, and other queries.", link: "/nadra-assistance" },
   { title: "Pakistani Visa Assistance", icon: FileText, description: "New visas, renewals, extensions, and other Pakistani visa queries.", link: "/pakistani-visa-assistance" },
-  { title: "British & Pakistani Passport Assistance", icon: Ticket, description: "New passports, renewals, lost or damaged replacements, and other queries.", link: "/passport-assistance" },
+  { title: "Passport Assistance", icon: Ticket, description: "New passports, renewals, lost or damaged replacements, and other queries.", link: "/passport-assistance" },
 ];
 
 const containerVariants = {

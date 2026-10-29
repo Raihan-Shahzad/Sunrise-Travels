@@ -3,6 +3,7 @@ import { db, appointmentsTable } from "@workspace/db";
 import { insertAppointmentSchema } from "@workspace/db";
 import { eq, and, desc } from "drizzle-orm";
 import { logger } from "../lib/logger";
+import { createAppointmentCalendarEvent } from "../lib/google-calendar";
 
 const router: IRouter = Router();
 
@@ -78,6 +79,27 @@ router.post("/appointments", async (req, res) => {
       .returning();
 
     const reference = formatReference(created.id);
+    try {
+      await createAppointmentCalendarEvent(created, reference);
+      logger.info(
+        {
+          event: "appointment.calendar_synced",
+          reference,
+          appointmentId: created.id,
+        },
+        "Appointment added to Google Calendar",
+      );
+    } catch {
+      logger.error(
+        {
+          event: "appointment.calendar_sync_failed",
+          reference,
+          appointmentId: created.id,
+        },
+        "Appointment saved, but Google Calendar event creation failed",
+      );
+    }
+
     logger.info(
       {
         event: "appointment.booked",

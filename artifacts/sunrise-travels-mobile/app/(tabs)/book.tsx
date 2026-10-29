@@ -37,7 +37,7 @@ const SERVICES: Record<ServiceType, { label: string; subtypes: string[] }> = {
     ],
   },
   passport: {
-    label: "British & Pakistani Passport Assistance",
+    label: "Passport Assistance",
     subtypes: [
       "New Passport / Passport Renewal",
       "Lost / Damaged Passport Replacement",

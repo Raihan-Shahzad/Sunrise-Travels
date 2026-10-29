@@ -20,7 +20,7 @@ const services = [
 ];
 
 const documents = [
-  "Valid Pakistani or British Passport",
+  "Valid passport",
   "Existing or expired CNIC / NICOP (if applicable)",
   "Passport-sized photograph (white background)",
   "Proof of relationship for family members (e.g. marriage / birth certificate)",

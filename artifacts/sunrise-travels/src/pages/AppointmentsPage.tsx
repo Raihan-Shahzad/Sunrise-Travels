@@ -47,7 +47,7 @@ const SERVICES = {
     ],
   },
   passport: {
-      label: "British & Pakistani Passport Assistance",
+      label: "Passport Assistance",
     color: "text-violet-600",
     bg: "bg-violet-50",
     border: "border-violet-200",
@@ -235,7 +235,7 @@ export default function AppointmentsPage() {
         <div className="container mx-auto px-4 text-center max-w-2xl">
           <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4">Book an Appointment</h1>
           <p className="text-primary-100 text-lg">
-            Schedule a free consultation at our Luton office for NADRA, Pakistani Visa, or British & Pakistani Passport assistance.
+            Schedule a free consultation at our Luton office for NADRA, Pakistani Visa, or Passport assistance.
           </p>
         </div>
       </section>

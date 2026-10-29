@@ -25,7 +25,7 @@ const SERVICE_META: Record<Service, { label: string; color: string; bg: string; 
     activeText: "text-white",
   },
   passport: {
-    label: "British & Pakistani Passport Assistance",
+    label: "Passport Assistance",
     color: "text-violet-700",
     bg: "bg-violet-50",
     border: "border-violet-100",
