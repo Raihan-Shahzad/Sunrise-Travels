@@ -1,5 +1,6 @@
 import { AlertTriangle, CheckCircle2, Globe, FileCheck, Briefcase, Phone, MessageCircle } from "lucide-react";
 import { PHONE, PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
+import PageHero from "@/components/PageHero";
 
 const services = [
   {
@@ -32,15 +33,12 @@ export default function VisaPage() {
   return (
     <div className="bg-slate-50 min-h-screen">
 
-      {/* Hero */}
-      <section className="bg-primary text-white py-20">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-6">Pakistani Visa Assistance</h1>
-          <p className="text-xl text-primary-100 leading-relaxed">
-            Navigate the visa application process with confidence. We offer document review and expert consultation for all visa types.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Visa Services"
+        title="Pakistani Visa Assistance"
+        subtitle="Navigate the visa application process with confidence. We offer document review and expert consultation for all visa types."
+        image="https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=2000&auto=format&fit=crop"
+      />
 
       <section className="py-16 container mx-auto px-4">
         <div className="max-w-3xl mx-auto space-y-10">

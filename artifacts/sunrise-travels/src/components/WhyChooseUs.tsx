@@ -1,6 +1,9 @@
 import { CheckCircle2, Users, ShieldCheck, HeartHandshake, Zap, Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
+
+const ASSET_BASE = import.meta.env.BASE_URL;
 
 const reasons = [
   { title: "Trusted Experts", icon: ShieldCheck, desc: "Over 15 years of industry experience." },
@@ -13,29 +16,35 @@ const reasons = [
 
 export default function WhyChooseUs() {
   return (
-    <section className="bg-primary text-white py-24 relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '30px 30px' }}></div>
+    <section className="relative isolate overflow-hidden bg-primary py-24 text-white">
+      <div
+        className="absolute inset-0 -z-20 bg-cover bg-center opacity-30"
+        style={{ backgroundImage: `url('${ASSET_BASE}images/madinah-masjid-nabawi.jpg')` }}
+      />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#04120F]/95 via-primary/90 to-[#04120F]/85" />
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-center">
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-24">
           <div className="space-y-8 text-center lg:text-left">
             <div>
-              <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-2 block">Our Promise</span>
-              <h2 className="font-heading text-4xl md:text-5xl font-bold mb-6">
-                Why Choose Sunrise Travels?
+              <span className="eyebrow mb-4 text-amber-300">Our Promise</span>
+              <h2 className="font-heading text-4xl font-semibold leading-[1.08] tracking-tight md:text-5xl">
+                Why choose Sunrise Travels?
               </h2>
-              <p className="text-primary-100 text-lg leading-relaxed">
-                We go beyond just booking tickets. We provide complete peace of mind through expert consultation, dedicated support, and unmatched industry knowledge. Your journey is our priority.
+              <p className="mt-6 text-lg leading-relaxed text-primary-100">
+                We go beyond just booking tickets. We provide complete peace of mind through expert
+                consultation, dedicated support, and unmatched industry knowledge. Your journey is
+                our priority.
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button asChild size="lg" className="bg-accent hover:bg-accent-600 text-white font-semibold h-14 px-8">
-                <a href="/about">Discover Our Story</a>
+            <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
+              <Button asChild size="lg" className="h-14 rounded-xl bg-accent px-8 font-semibold text-primary hover:bg-accent/85">
+                <Link href="/about">Discover Our Story</Link>
               </Button>
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
+          <div className="grid gap-4 sm:grid-cols-2 md:gap-5">
             {reasons.map((r, i) => {
               const Icon = r.icon;
               return (
@@ -44,14 +53,14 @@ export default function WhyChooseUs() {
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl hover:bg-white/15 transition-colors"
+                  transition={{ delay: i * 0.08 }}
+                  className="rounded-2xl border border-white/15 bg-white/10 p-6 backdrop-blur-md transition-colors hover:bg-white/15"
                 >
-                  <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-accent mb-4">
-                    <Icon className="w-6 h-6" />
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-400/15 text-amber-300">
+                    <Icon className="h-6 w-6" />
                   </div>
-                  <h3 className="font-heading font-semibold text-xl mb-2">{r.title}</h3>
-                  <p className="text-primary-100 text-sm">{r.desc}</p>
+                  <h3 className="mb-2 font-heading text-xl font-semibold">{r.title}</h3>
+                  <p className="text-sm text-primary-100">{r.desc}</p>
                 </motion.div>
               );
             })}

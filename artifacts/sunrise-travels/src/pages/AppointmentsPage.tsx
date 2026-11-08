@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import PageHero from "@/components/PageHero";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -231,14 +232,13 @@ export default function AppointmentsPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <section className="bg-primary text-white py-16">
-        <div className="container mx-auto px-4 text-center max-w-2xl">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4">Book an Appointment</h1>
-          <p className="text-primary-100 text-lg">
-            Schedule a free consultation at our Luton office for NADRA, Pakistani Visa, or Passport assistance.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Free consultation"
+        title="Book an Appointment"
+        subtitle="Schedule a free consultation at our Luton office for NADRA, Pakistani Visa, or Passport assistance."
+        image="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2000&auto=format&fit=crop"
+        size="compact"
+      />
 
       {/* Stepper */}
       <div className="sticky top-16 z-30 bg-white border-b shadow-sm">

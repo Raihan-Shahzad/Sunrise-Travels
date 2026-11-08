@@ -1,28 +1,29 @@
 import { Users, HeartHandshake } from "lucide-react";
+import PageHero from "@/components/PageHero";
+import SectionHeading from "@/components/SectionHeading";
 
 export default function AboutPage() {
   return (
-    <div className="bg-white min-h-screen">
-      {/* Hero */}
-      <section className="bg-slate-900 text-white py-24 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20 bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop')"}}></div>
-        <div className="container mx-auto px-4 relative z-10 text-center max-w-4xl">
-          <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-4 block">Our Story</span>
-          <h1 className="font-heading text-4xl md:text-6xl font-bold mb-6">
-            Connecting Communities, Fulfilling Journeys
-          </h1>
-          <p className="text-xl text-slate-300 leading-relaxed">
-            Since 2008, Sunrise Travels has been the trusted name in Luton and across the UK for premium travel services, specializing in Hajj, Umrah, and worldwide flights.
-          </p>
-        </div>
-      </section>
+    <div className="bg-background min-h-screen">
+      <PageHero
+        eyebrow="Our Story"
+        title="Connecting Communities, Fulfilling Journeys"
+        subtitle="Since 2008, Sunrise Travels has been the trusted name in Luton and across the UK for premium travel services, specializing in Hajj, Umrah, and worldwide flights."
+        image="https://images.unsplash.com/photo-1530789253388-582c481c54b0?q=80&w=2000&auto=format&fit=crop"
+        imagePosition="center 35%"
+        size="tall"
+      />
 
       {/* Mission & Vision */}
       <section className="py-20 container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
-          <div className="relative aspect-square rounded-2xl overflow-hidden shadow-2xl">
-            <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=800&auto=format&fit=crop')"}}></div>
-            <div className="absolute inset-0 bg-primary/20"></div>
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[1.6rem] shadow-2xl">
+            <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1000&auto=format&fit=crop')"}}></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-[#04120F]/60 via-transparent to-transparent"></div>
+            <div className="absolute inset-x-0 bottom-0 p-6 text-white">
+              <p className="eyebrow mb-2 text-amber-300">Luton, UK</p>
+              <p className="font-heading text-xl font-semibold">Your journey, handled with care</p>
+            </div>
           </div>
 
           <div className="space-y-8">
@@ -57,7 +58,7 @@ export default function AboutPage() {
       {/* Stats */}
       <section className="bg-slate-50 py-16 border-y border-slate-200">
         <div className="container mx-auto px-4 max-w-5xl text-center">
-          <h2 className="font-heading text-3xl font-bold mb-12 text-slate-900">Our Impact Over the Years</h2>
+          <SectionHeading eyebrow="Our Impact" title="Our impact over the years" className="mb-12" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="space-y-2">
               <div className="text-4xl font-bold text-primary">15+</div>
