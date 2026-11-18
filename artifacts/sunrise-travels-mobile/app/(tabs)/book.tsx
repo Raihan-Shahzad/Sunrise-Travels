@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Platform,
   Alert,
+  Linking,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -59,6 +60,8 @@ const TIMES = [
   "05:00 PM",
 ];
 
+const WHATSAPP_NUMBER = "441582732007";
+
 function getAvailableDates(count = 14): Date[] {
   const dates: Date[] = [];
   const d = new Date();
@@ -98,6 +101,8 @@ export default function BookScreen() {
   const [loading, setLoading] = useState(false);
   const [booked, setBooked] = useState(false);
   const [bookingRef, setBookingRef] = useState("");
+  const [bookingSaved, setBookingSaved] = useState(false);
+  const [whatsAppUrl, setWhatsAppUrl] = useState("");
   const [error, setError] = useState("");
   const [slots, setSlots] = useState<Record<string, boolean>>({});
   const [slotsLoading, setSlotsLoading] = useState(false);
@@ -151,6 +156,9 @@ export default function BookScreen() {
   async function handleSubmit() {
     setLoading(true);
     setError("");
+    let reference = "";
+    let saved = false;
+
     try {
       const res = await fetch(`${base}/api/appointments`, {
         method: "POST",
@@ -167,19 +175,60 @@ export default function BookScreen() {
         }),
       });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error((data as any)?.error || "Failed to book appointment");
+        throw new Error("Booking request was not saved");
       }
       const data = await res.json() as { reference: string };
-      setBookingRef(data.reference);
-      setBooked(true);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : "Something went wrong. Please try again.";
-      setError(msg);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    } finally {
-      setLoading(false);
+      reference = data.reference;
+      saved = true;
+    } catch {
+      // Continue to WhatsApp so the customer can still send the request manually.
+    }
+
+    const message = [
+      "Hello Sunrise Travels, I would like to book a free appointment.",
+      "",
+      `Service: ${service ? SERVICES[service].label : "Appointment assistance"}`,
+      `Type: ${subService}`,
+      `Date: ${selectedDate ? formatDateLabel(selectedDate) : dateKey}`,
+      `Time: ${time}`,
+      ...(reference ? [`Reference: ${reference}`] : []),
+      "",
+      "My details:",
+      `Name: ${name.trim()}`,
+      `Email: ${email.trim()}`,
+      `Phone: ${phone.trim()}`,
+      ...(notes.trim() ? ["", `Notes: ${notes.trim()}`] : []),
+      ...(!saved
+        ? ["", "The website could not confirm whether this request was saved. Please check before creating a duplicate booking."]
+        : []),
+      "",
+      "Please confirm my appointment. Thank you.",
+    ].join("\n");
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+    setBookingRef(reference);
+    setBookingSaved(saved);
+    setWhatsAppUrl(url);
+    setBooked(true);
+    setLoading(false);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+    try {
+      if (Platform.OS === "web") {
+        window.location.assign(url);
+      } else {
+        await Linking.openURL(url);
+      }
+    } catch {
+      setError("WhatsApp did not open automatically. Tap Open WhatsApp below.");
+    }
+  }
+
+  async function openWhatsApp(url: string) {
+    if (Platform.OS === "web") {
+      window.location.assign(url);
+    } else {
+      await Linking.openURL(url);
     }
   }
 
@@ -196,6 +245,8 @@ export default function BookScreen() {
     setNotes("");
     setError("");
     setBookingRef("");
+    setBookingSaved(false);
+    setWhatsAppUrl("");
   }
 
   if (booked) {
@@ -205,11 +256,17 @@ export default function BookScreen() {
           <View style={styles.successIcon}>
             <Feather name="check-circle" size={48} color="#22c55e" />
           </View>
-          <Text style={styles.successTitle}>Appointment Booked!</Text>
-          <Text style={styles.successSub}>We'll confirm by phone or email shortly.</Text>
+          <Text style={styles.successTitle}>
+            {bookingSaved ? "Appointment Booked!" : "Send Appointment Request"}
+          </Text>
+          <Text style={styles.successSub}>
+            {bookingSaved
+              ? "Your request is saved. Send the details on WhatsApp so our team can confirm it."
+              : "The website could not confirm the online booking. Send this request on WhatsApp so our team can check it."}
+          </Text>
 
           <View style={styles.summaryBox}>
-            <SummaryRow label="Reference" value={bookingRef} highlight />
+            {bookingRef ? <SummaryRow label="Reference" value={bookingRef} highlight /> : null}
             <SummaryRow label="Service" value={SERVICES[service!].label} />
             <SummaryRow label="Type" value={subService} />
             <SummaryRow label="Date" value={selectedDate ? formatDateLabel(selectedDate) : dateKey} />
@@ -223,6 +280,26 @@ export default function BookScreen() {
               This is a free in-office consultation. We provide guidance and document preparation only.
             </Text>
           </View>
+
+          {error ? (
+            <View style={styles.errorBanner}>
+              <Feather name="alert-circle" size={14} color="#dc2626" />
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          ) : null}
+
+          {whatsAppUrl ? (
+            <Pressable
+              style={({ pressed }) => [styles.bookAnotherBtn, pressed && { opacity: 0.85 }]}
+              onPress={() => {
+                void openWhatsApp(whatsAppUrl).catch(() => {
+                  setError("WhatsApp could not be opened on this device.");
+                });
+              }}
+            >
+              <Text style={styles.bookAnotherText}>Open WhatsApp</Text>
+            </Pressable>
+          ) : null}
 
           <Pressable
             style={({ pressed }) => [styles.bookAnotherBtn, pressed && { opacity: 0.85 }]}

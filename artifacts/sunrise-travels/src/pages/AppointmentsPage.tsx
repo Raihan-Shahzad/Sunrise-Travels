@@ -148,6 +148,9 @@ export default function AppointmentsPage() {
 
     setLoading(true);
     setError("");
+    let bookingReference: string | undefined;
+    let bookingSaved = false;
+
     try {
       const res = await fetch(`${BASE}/api/appointments`, {
         method: "POST",
@@ -162,30 +165,36 @@ export default function AppointmentsPage() {
         }),
       });
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.error || "Failed to book appointment");
+        throw new Error("Booking request was not saved");
       }
       const data = await res.json().catch(() => ({}));
-      const message = [
-        "Hello Sunrise Travels, I would like to book a free appointment.",
-        "",
-        `Service: ${SERVICES[service!].label}`,
-        `Type: ${subService}`,
-        ...(data?.reference ? [`Reference: ${data.reference}`] : []),
-        "",
-        "My details:",
-        `Name: ${name.trim()}`,
-        `Email: ${email.trim()}`,
-        `Phone: ${phone.trim()}`,
-        ...(notes.trim() ? ["", `Notes: ${notes.trim()}`] : []),
-        "",
-        "Please confirm my appointment. Thank you.",
-      ].join("\n");
-      window.location.assign(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
-      setLoading(false);
+      bookingReference = typeof data?.reference === "string" ? data.reference : undefined;
+      bookingSaved = true;
+    } catch {
+      // Keep the WhatsApp handoff available if the booking API is temporarily unavailable.
     }
+
+    const message = [
+      "Hello Sunrise Travels, I would like to book a free appointment.",
+      "",
+      `Service: ${SERVICES[service!].label}`,
+      `Type: ${subService}`,
+      ...(bookingReference ? [`Reference: ${bookingReference}`] : []),
+      "",
+      "My details:",
+      `Name: ${name.trim()}`,
+      `Email: ${email.trim()}`,
+      `Phone: ${phone.trim()}`,
+      ...(notes.trim() ? ["", `Notes: ${notes.trim()}`] : []),
+      ...(!bookingSaved
+        ? ["", "The website could not confirm whether this request was saved. Please check before creating a duplicate booking."]
+        : []),
+      "",
+      "Please confirm my appointment. Thank you.",
+    ].join("\n");
+
+    window.location.assign(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`);
+    setLoading(false);
   }
 
   return (
