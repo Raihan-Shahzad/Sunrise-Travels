@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import { ArrowUpRight, MapPin } from "lucide-react";
+import SectionHeading from "@/components/SectionHeading";
 
 const ASSET_BASE = import.meta.env.BASE_URL;
 
@@ -64,19 +66,24 @@ const destinations = [
 
 export default function DestinationGrid() {
   return (
-    <section className="py-20 bg-white">
+    <section className="bg-white py-20 md:py-24">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-2 block">Popular Routes</span>
-          <h2 className="font-heading text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-            Top Destinations
-          </h2>
-          <p className="text-slate-600 max-w-2xl mx-auto text-lg">
-            From the holy cities of Makkah and Madinah to the heart of Pakistan — we fly you there with the best fares and service.
-          </p>
+        <div className="mb-14 flex flex-col gap-6 md:mb-16 md:flex-row md:items-end md:justify-between">
+          <SectionHeading
+            align="left"
+            eyebrow="Popular Routes"
+            title="Where will you go next?"
+            subtitle="From the holy cities of Makkah and Madinah to the heart of Pakistan — we fly you there with the best fares and service."
+          />
+          <Link
+            href="/flights"
+            className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-primary hover:text-accent-600"
+          >
+            All routes <ArrowUpRight className="h-4 w-4" />
+          </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 gap-4 md:gap-5 lg:grid-cols-4">
           {destinations.map((d, index) => (
             <motion.div
               key={d.name}
@@ -84,27 +91,38 @@ export default function DestinationGrid() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.05 }}
-              className="group relative overflow-hidden rounded-2xl aspect-[4/5] block"
+              className="group relative block overflow-hidden rounded-[1.4rem]"
             >
-              <Link href={d.link} className="block w-full h-full">
-                <div
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 bg-slate-700"
-                  style={{ backgroundImage: `url('${d.image}')` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/30 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
-                <div className="absolute bottom-0 left-0 w-full p-4 md:p-5 text-white">
-                  <h3 className="font-heading text-xl font-bold leading-tight">{d.name}</h3>
-                  <p className="text-xs text-slate-300 mb-1">{d.sub}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-amber-400 font-semibold text-xs">{d.price}</span>
-                    <span className="text-xs font-semibold uppercase tracking-wider bg-white/20 px-2 py-0.5 rounded backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                      Book →
+              <Link href={d.link} className="block h-full w-full">
+                <div className="relative aspect-[3/4] w-full">
+                  <div
+                    className="absolute inset-0 bg-cover bg-center bg-slate-700 transition-transform duration-[900ms] group-hover:scale-110"
+                    style={{ backgroundImage: `url('${d.image}')` }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#04120F]/95 via-[#04120F]/35 to-[#04120F]/10 transition-opacity group-hover:from-[#04120F]/98" />
+
+                  <span className="absolute right-3 top-3 rounded-full border border-white/20 bg-[#04120F]/45 px-3 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.16em] text-white/85 backdrop-blur-md">
+                    {d.sub}
+                  </span>
+
+                  <div className="absolute inset-x-0 bottom-0 p-4 text-white md:p-5">
+                    <h3 className="font-heading text-2xl font-semibold leading-tight md:text-[1.7rem]">
+                      {d.name}
+                    </h3>
+                    <p className="mt-1 text-sm font-medium text-amber-300">{d.price}</p>
+                    <span className="mt-2 flex translate-y-1 items-center gap-1 text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-white/70 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                      Book now <span aria-hidden="true">→</span>
                     </span>
                   </div>
                 </div>
               </Link>
             </motion.div>
           ))}
+        </div>
+
+        <div className="mt-8 flex items-center justify-center gap-2 text-sm text-slate-500">
+          <MapPin className="h-4 w-4 text-accent-600" />
+          Don&apos;t see your city? Call us — we book worldwide.
         </div>
       </div>
     </section>

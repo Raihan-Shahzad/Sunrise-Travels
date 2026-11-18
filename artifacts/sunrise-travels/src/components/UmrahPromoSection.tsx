@@ -42,7 +42,7 @@ export default function UmrahPromoSection() {
             <p className="text-amber-400 font-semibold tracking-[0.25em] uppercase text-xs mb-3">
               ✦ Umrah & Hajj 2025 / 1447H ✦
             </p>
-            <h2 className="font-heading text-4xl md:text-5xl font-bold text-white leading-tight mb-5">
+            <h2 className="font-heading text-4xl md:text-5xl font-semibold tracking-tight text-white leading-[1.08] mb-5">
               Answer the Call of<br />
               <span className="text-amber-400">Allah's Sacred House</span>
             </h2>

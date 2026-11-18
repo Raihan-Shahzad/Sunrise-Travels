@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import SectionHeading from "@/components/SectionHeading";
 
 const faqs = [
   {
@@ -25,28 +26,28 @@ export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="py-24 bg-white">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <div className="text-center mb-16">
-          <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-2 block">Common Questions</span>
-          <h2 className="font-heading text-4xl font-bold text-slate-900">
-            Frequently Asked Questions
-          </h2>
-        </div>
+    <section className="bg-white py-24">
+      <div className="container mx-auto max-w-4xl px-4">
+        <SectionHeading
+          eyebrow="Common Questions"
+          title="Frequently asked questions"
+          className="mb-14"
+        />
 
-        <div className="space-y-4">
+        <div className="divide-y divide-slate-200 border-y border-slate-200">
           {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className={`border rounded-xl overflow-hidden transition-colors duration-300 ${openIndex === index ? 'border-primary bg-primary/5' : 'border-slate-200 bg-white hover:border-slate-300'}`}
-            >
+            <div key={index}>
               <button
-                className="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none"
+                className="flex w-full items-center justify-between gap-8 py-6 text-left focus:outline-none"
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
               >
-                <span className="font-semibold text-lg text-slate-900 pr-8">{faq.question}</span>
+                <span className="font-heading text-lg font-semibold text-slate-900 md:text-xl">
+                  {faq.question}
+                </span>
                 <ChevronDown
-                  className={`w-5 h-5 text-primary shrink-0 transition-transform duration-300 ${openIndex === index ? 'rotate-180' : ''}`}
+                  className={`h-5 w-5 shrink-0 transition-transform duration-300 ${
+                    openIndex === index ? "rotate-180 text-accent-600" : "text-slate-400"
+                  }`}
                 />
               </button>
 
@@ -58,7 +59,7 @@ export default function FAQSection() {
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <div className="px-6 pb-5 text-slate-600 leading-relaxed">
+                    <div className="max-w-3xl pb-6 leading-relaxed text-slate-600">
                       {faq.answer}
                     </div>
                   </motion.div>

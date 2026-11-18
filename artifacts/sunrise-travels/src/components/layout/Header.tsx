@@ -19,18 +19,20 @@ export default function Header() {
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled ? "bg-white/95 shadow-md backdrop-blur-sm" : "bg-white border-b"
+        isScrolled
+          ? "border-b border-slate-200/70 bg-white/95 shadow-md backdrop-blur-sm"
+          : "border-b border-slate-200/70 bg-white"
       }`}
     >
       {/* Top Info Bar */}
-      <div className="hidden md:block bg-slate-900 text-slate-200 text-xs py-2">
-        <div className="container mx-auto flex justify-between items-center px-4">
+      <div className="hidden bg-[#071B17] py-2 text-[0.68rem] uppercase tracking-[0.16em] text-emerald-50/70 md:block">
+        <div className="container mx-auto flex items-center justify-between px-4">
           <div className="flex gap-6">
-            <a href={`tel:${PHONE_INTL}`} className="flex items-center gap-2 hover:text-white transition">
+            <a href={`tel:${PHONE_INTL}`} className="flex items-center gap-2 transition hover:text-amber-300">
               <Phone className="h-3 w-3" />
               {PHONE}
             </a>
-            <a href={`mailto:${EMAIL}`} className="flex items-center gap-2 hover:text-white transition">
+            <a href={`mailto:${EMAIL}`} className="flex items-center gap-2 transition hover:text-amber-300">
               <Mail className="h-3 w-3" />
               {EMAIL}
             </a>
@@ -44,29 +46,34 @@ export default function Header() {
 
       {/* Main Nav */}
       <div className="container mx-auto flex items-center justify-between p-4">
-        <Link href="/" className="flex items-center shrink-0">
-          <img src="/logo.png" alt="Sunrise Travels" className="h-14 md:h-16 w-auto object-contain" />
+        <Link href="/" className="flex shrink-0 items-center">
+          <img src="/logo.png" alt="Sunrise Travels" className="h-14 w-auto object-contain md:h-16" />
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-8 font-medium text-sm text-slate-700">
-          <Link href="/flights" className="hover:text-primary transition-colors">Flights</Link>
-          <Link href="/hajj-umrah" className="hover:text-primary transition-colors">Hajj &amp; Umrah</Link>
-          <Link href="/nadra-assistance" className="hover:text-primary transition-colors">NADRA</Link>
-          <Link href="/pakistani-visa-assistance" className="hover:text-primary transition-colors">Visa</Link>
-          <Link href="/passport-assistance" className="hover:text-primary transition-colors">Passport</Link>
-          <Link href="/appointments" className="bg-accent hover:bg-accent/90 text-white px-4 py-1.5 rounded-full font-semibold text-sm transition-colors">Book Appt</Link>
+        <nav className="hidden items-center gap-7 text-[0.76rem] font-semibold uppercase tracking-[0.13em] text-slate-700 lg:flex">
+          <Link href="/flights" className="transition-colors hover:text-accent-600">Flights</Link>
+          <Link href="/hajj-umrah" className="transition-colors hover:text-accent-600">Hajj &amp; Umrah</Link>
+          <Link href="/nadra-assistance" className="transition-colors hover:text-accent-600">NADRA</Link>
+          <Link href="/pakistani-visa-assistance" className="transition-colors hover:text-accent-600">Visa</Link>
+          <Link href="/passport-assistance" className="transition-colors hover:text-accent-600">Passport</Link>
+          <Link
+            href="/appointments"
+            className="rounded-full bg-accent px-5 py-2 text-[0.72rem] font-bold uppercase tracking-[0.12em] text-primary transition-colors hover:bg-accent/85"
+          >
+            Book Appt
+          </Link>
         </nav>
 
         {/* Desktop CTAs */}
-        <div className="hidden lg:flex items-center gap-3">
-          <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/5 font-semibold">
+        <div className="hidden items-center gap-3 lg:flex">
+          <Button asChild variant="outline" className="border-primary/25 font-semibold text-primary hover:bg-primary/5">
             <a href={`tel:${PHONE_INTL}`}>
               <Phone className="mr-2 h-4 w-4" />
               {PHONE}
             </a>
           </Button>
-          <Button asChild className="bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold shadow-sm">
+          <Button asChild className="bg-[#25D366] font-semibold text-white shadow-sm hover:bg-[#20bd5a]">
             <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer">
               <MessageCircle className="mr-2 h-4 w-4" />
               WhatsApp Us
@@ -75,8 +82,8 @@ export default function Header() {
         </div>
 
         {/* Mobile controls */}
-        <div className="flex lg:hidden items-center gap-2">
-          <Button asChild size="sm" className="bg-[#25D366] hover:bg-[#20bd5a] text-white hidden sm:flex">
+        <div className="flex items-center gap-2 lg:hidden">
+          <Button asChild size="sm" className="hidden bg-[#25D366] text-white hover:bg-[#20bd5a] sm:flex">
             <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer">
               WhatsApp
             </a>

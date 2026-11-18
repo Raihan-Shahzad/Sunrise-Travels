@@ -1,5 +1,6 @@
 import { AlertTriangle, CheckCircle2, FileText, Users, Phone, MessageCircle } from "lucide-react";
 import { PHONE, PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
+import PageHero from "@/components/PageHero";
 
 const services = [
   {
@@ -31,17 +32,12 @@ export default function NADRAPage() {
   return (
     <div className="bg-slate-50 min-h-screen">
 
-      {/* Hero */}
-      <section className="bg-primary text-white py-20">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-6">
-            NADRA Application Assistance
-          </h1>
-          <p className="text-xl text-primary-100 leading-relaxed">
-            Skip the confusion and hassle. We provide expert guidance and document preparation assistance for all your NADRA needs.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="NADRA Assistance"
+        title="NADRA Application Assistance"
+        subtitle="Skip the confusion and hassle. We provide expert guidance and document preparation assistance for all your NADRA needs."
+        image="https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=2000&auto=format&fit=crop"
+      />
 
       <section className="py-16 container mx-auto px-4">
         <div className="max-w-3xl mx-auto space-y-10">

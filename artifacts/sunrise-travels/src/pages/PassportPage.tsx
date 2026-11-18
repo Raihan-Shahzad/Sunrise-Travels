@@ -1,5 +1,6 @@
 import { AlertTriangle, CheckCircle2, Ticket, Phone, MessageCircle } from "lucide-react";
 import { PHONE, PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
+import PageHero from "@/components/PageHero";
 
 const steps = [
   { num: 1, title: "Document Review", desc: "We check your existing documents (CNIC, old passport, etc.) to ensure they meet consulate requirements before your visit." },
@@ -19,15 +20,12 @@ export default function PassportPage() {
   return (
     <div className="bg-slate-50 min-h-screen">
 
-      {/* Hero */}
-      <section className="bg-primary text-white py-20">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-6">Passport Assistance</h1>
-          <p className="text-xl text-primary-100 leading-relaxed">
-            Expert guidance for passport applications, renewals, and replacements.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Passport Services"
+        title="Passport Assistance"
+        subtitle="Expert guidance for passport applications, renewals, and replacements."
+        image="https://images.unsplash.com/photo-1569154941061-e231b4725ef1?q=80&w=2000&auto=format&fit=crop"
+      />
 
       <section className="py-16 container mx-auto px-4">
         <div className="max-w-3xl mx-auto space-y-10">

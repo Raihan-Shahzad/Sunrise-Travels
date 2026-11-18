@@ -32,73 +32,87 @@
   --color-destructive-foreground: hsl(var(--destructive-foreground));
 
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-heading: var(--font-poppins), system-ui, sans-serif;
+  --font-heading: var(--font-fraunces), Georgia, "Times New Roman", serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Warm neutral scale — remaps the cool slate greys to sand/stone so every
+     existing surface picks up the editorial travel palette. */
+  --color-slate-50: hsl(40 36% 97%);
+  --color-slate-100: hsl(39 28% 94%);
+  --color-slate-200: hsl(38 22% 88%);
+  --color-slate-300: hsl(36 16% 78%);
+  --color-slate-400: hsl(34 11% 60%);
+  --color-slate-500: hsl(32 9% 47%);
+  --color-slate-600: hsl(30 10% 37%);
+  --color-slate-700: hsl(162 12% 27%);
+  --color-slate-800: hsl(164 20% 17%);
+  --color-slate-900: hsl(166 27% 10%);
+  --color-slate-950: hsl(167 32% 6%);
 }
 
 :root {
-  /* Primary: Deep Blue #0F4C81 */
-  --primary: 210 78% 28%;
-  --primary-foreground: 0 0% 100%;
+  /* Primary: deep pine — the calm, premium travel-brand green */
+  --primary: 164 46% 16%;
+  --primary-foreground: 40 42% 97%;
 
-  /* Secondary: Green #0FA958 */
-  --secondary: 152 84% 36%;
-  --secondary-foreground: 0 0% 100%;
+  /* Secondary: softer forest */
+  --secondary: 158 32% 30%;
+  --secondary-foreground: 40 42% 97%;
 
-  /* Accent: Orange #F5A623 */
-  --accent: 38 91% 55%;
-  --accent-foreground: 0 0% 100%;
+  /* Accent: warm brass / sunrise gold */
+  --accent: 35 82% 54%;
+  --accent-foreground: 164 46% 12%;
 
-  /* Neutral / Layout */
-  --background: 0 0% 100%;
-  --foreground: 220 26% 9%;
+  /* Neutral / Layout — warm paper */
+  --background: 40 38% 98%;
+  --foreground: 166 26% 11%;
   --card: 0 0% 100%;
-  --card-foreground: 220 26% 9%;
+  --card-foreground: 166 26% 11%;
   --popover: 0 0% 100%;
-  --popover-foreground: 220 26% 9%;
-  --muted: 220 14% 96%;
-  --muted-foreground: 220 8% 46%;
-  --destructive: 0 84% 60%;
+  --popover-foreground: 166 26% 11%;
+  --muted: 39 26% 94%;
+  --muted-foreground: 32 10% 42%;
+  --destructive: 0 72% 48%;
   --destructive-foreground: 0 0% 100%;
 
   /* Border / Input / Ring */
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
-  --ring: 210 78% 28%;
-  --radius: 0.5rem;
+  --border: 38 20% 87%;
+  --input: 38 20% 87%;
+  --ring: 164 46% 16%;
+  --radius: 0.85rem;
 
   /* Custom color scales */
-  --primary-50: 210 60% 96%;
-  --primary-100: 210 55% 90%;
-  --primary-200: 210 50% 78%;
-  --primary-300: 210 50% 64%;
-  --primary-400: 210 60% 48%;
-  --primary-500: 210 78% 28%;
-  --primary-600: 210 82% 24%;
-  --primary-700: 210 85% 20%;
-  --primary-800: 210 88% 16%;
-  --primary-900: 210 90% 12%;
-  --primary-950: 210 92% 8%;
+  --primary-50: 160 34% 96%;
+  --primary-100: 158 30% 88%;
+  --primary-200: 158 26% 76%;
+  --primary-300: 160 24% 62%;
+  --primary-400: 162 30% 42%;
+  --primary-500: 164 46% 16%;
+  --primary-600: 164 48% 13%;
+  --primary-700: 165 50% 10%;
+  --primary-800: 166 52% 8%;
+  --primary-900: 167 55% 6%;
+  --primary-950: 168 58% 4%;
 
-  --secondary-50: 152 60% 96%;
-  --secondary-100: 152 55% 88%;
-  --secondary-500: 152 84% 36%;
-  --secondary-600: 152 88% 30%;
-  --secondary-700: 152 90% 24%;
+  --secondary-50: 152 40% 96%;
+  --secondary-100: 154 32% 88%;
+  --secondary-500: 158 32% 30%;
+  --secondary-600: 159 36% 25%;
+  --secondary-700: 160 38% 20%;
 
   --accent-50: 38 90% 96%;
   --accent-100: 38 85% 88%;
-  --accent-400: 38 91% 60%;
-  --accent-500: 38 91% 55%;
-  --accent-600: 38 92% 45%;
+  --accent-400: 35 85% 60%;
+  --accent-500: 35 82% 54%;
+  --accent-600: 32 80% 34%;
 
   /* Fonts */
   --font-inter: 'Inter', system-ui, sans-serif;
-  --font-poppins: 'Poppins', system-ui, sans-serif;
+  --font-fraunces: 'Fraunces', Georgia, 'Times New Roman', serif;
 }
 
 @layer base {
@@ -113,10 +127,18 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-inter), system-ui, sans-serif;
+    font-feature-settings: "cv11", "ss01";
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-poppins), system-ui, sans-serif;
+    font-family: var(--font-fraunces), Georgia, serif;
+    font-optical-sizing: auto;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: hsl(var(--accent) / 0.35);
+    color: hsl(var(--foreground));
   }
 }
 
@@ -131,11 +153,32 @@
   }
 
   .font-heading {
-    font-family: var(--font-poppins), system-ui, sans-serif;
+    font-family: var(--font-fraunces), Georgia, serif;
   }
 
   .font-body {
     font-family: var(--font-inter), system-ui, sans-serif;
+  }
+
+  /* Small caps label used above section titles */
+  .eyebrow {
+    display: block;
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  /* Shared photographic treatment: deep pine scrim for legible overlaid text */
+  .photo-scrim {
+    background-image: linear-gradient(
+      to top,
+      rgba(4, 18, 15, 0.94) 0%,
+      rgba(4, 18, 15, 0.45) 42%,
+      rgba(4, 18, 15, 0.12) 78%,
+      rgba(4, 18, 15, 0.35) 100%
+    );
   }
 }
 

@@ -62,7 +62,7 @@ const whyUs = [
 const sites = [
   { name: "Masjid al-Haram", location: "Makkah", image: `${ASSET_BASE}images/makkah-kaaba.jpg` },
   { name: "Masjid Nabawi", location: "Madinah", image: `${ASSET_BASE}images/madinah-masjid-nabawi.jpg` },
-  { name: "Mount Arafat", location: "Makkah", image: "https://images.unsplash.com/photo-1590076215667-875d4ef2d7bb?q=80&w=800&auto=format&fit=crop" },
+  { name: "Mount Arafat", location: "Makkah", image: "https://images.unsplash.com/photo-1564769662533-4f00a87b4056?q=80&w=800&auto=format&fit=crop" },
   { name: "Masjid Quba", location: "Madinah", image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=800&auto=format&fit=crop" },
 ];
 
@@ -89,7 +89,7 @@ export default function HajjUmrahPage() {
         <div className="container mx-auto px-4 relative z-10 text-center max-w-3xl py-24">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-amber-400 font-semibold tracking-[0.3em] uppercase text-sm mb-3">بسم الله الرحمن الرحيم</p>
-            <h1 className="font-heading text-4xl md:text-6xl font-bold text-white leading-tight mb-5">
+            <h1 className="font-heading text-4xl md:text-6xl font-semibold tracking-tight text-white leading-[1.05] mb-5">
               Your Sacred Journey<br />
               <span className="text-amber-400">to Makkah & Madinah</span>
             </h1>

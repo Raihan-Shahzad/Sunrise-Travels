@@ -1,20 +1,18 @@
 import ContactForm from "@/components/forms/ContactForm";
 import { Phone, Mail, MapPin, Clock, MessageCircle } from "lucide-react";
 import { PHONE, PHONE_INTL, WHATSAPP_NUMBER, EMAIL } from "@/lib/site-config";
+import PageHero from "@/components/PageHero";
 
 export default function ContactPage() {
   return (
     <div className="bg-slate-50 min-h-screen">
-      <section className="bg-primary text-white py-20">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-6">
-            Get in Touch
-          </h1>
-          <p className="text-xl text-primary-100 mb-8 leading-relaxed">
-            Our travel experts are ready to assist you. Call us, drop a message, or visit our Luton office.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        eyebrow="Visit or call"
+        title="Get in Touch"
+        subtitle="Our travel experts are ready to assist you. Call us, drop a message, or visit our Luton office."
+        image="https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=2000&auto=format&fit=crop"
+        imagePosition="center 45%"
+      />
 
       <section className="py-16 container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">

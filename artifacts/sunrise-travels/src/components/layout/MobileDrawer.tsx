@@ -43,7 +43,7 @@ export function MobileDrawer() {
               <Link href="/nadra-assistance" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">NADRA</Link>
               <Link href="/pakistani-visa-assistance" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Visa</Link>
               <Link href="/passport-assistance" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Passport</Link>
-              <Link href="/appointments" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-semibold text-accent">📅 Book Appointment</Link>
+              <Link href="/appointments" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-semibold text-accent-600">📅 Book Appointment</Link>
               <Link href="/about" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">About Us</Link>
               <Link href="/blog" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Blog</Link>
               <Link href="/contact" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Contact</Link>

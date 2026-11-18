@@ -606,7 +606,7 @@ export default function FlightEnquiryForm() {
         <button
           type="submit"
           disabled={formState === "loading"}
-          className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent/90 disabled:opacity-70 text-white font-bold py-3.5 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-[0.98] mt-2"
+          className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent/90 disabled:opacity-70 text-primary font-bold py-3.5 rounded-xl transition-all shadow-sm hover:shadow-md active:scale-[0.98] mt-2"
         >
           {formState === "loading"
             ? <><Loader2 className="w-4 h-4 animate-spin" /> Opening WhatsApp…</>

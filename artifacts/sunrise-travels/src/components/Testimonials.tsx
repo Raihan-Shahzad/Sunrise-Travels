@@ -1,5 +1,6 @@
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
+import SectionHeading from "@/components/SectionHeading";
 
 const testimonials = [
   { name: "Loves travel", rating: 5, text: "Excellent customer service! I've been using Sunrise Travel for the past five years.", date: "Google review" },
@@ -15,21 +16,29 @@ const GOOGLE_REVIEWS_URL = "https://www.google.com/maps/place/Sunrise+Travels+Ce
 
 export default function Testimonials() {
   return (
-    <section className="py-24 bg-slate-900 text-white overflow-hidden">
-      <div className="container mx-auto px-4 text-center mb-16">
-        <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-2 block">Testimonials</span>
-        <h2 className="font-heading text-4xl md:text-5xl font-bold mb-4">
-          What Our Clients Say
-        </h2>
-        <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-          Real feedback from our Google Business profile — 4.6/5 from 22 reviews.
-        </p>
-        <a href={GOOGLE_REVIEWS_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-amber-400 text-sm font-semibold hover:text-amber-300">
-          Read all Google reviews <span aria-hidden="true">↗</span>
-        </a>
+    <section className="overflow-hidden bg-[#071B17] py-24 text-white">
+      <div className="container mx-auto mb-14 px-4">
+        <SectionHeading
+          light
+          eyebrow="Testimonials"
+          title="What our clients say"
+          subtitle="Real feedback from our Google Business profile — 4.6/5 from 22 reviews."
+        />
+        <div className="mt-5 text-center">
+          <a
+            href={GOOGLE_REVIEWS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-amber-300 hover:text-amber-200"
+          >
+            Read all Google reviews <span aria-hidden="true">↗</span>
+          </a>
+        </div>
       </div>
 
       <div className="relative flex overflow-hidden">
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-[#071B17] to-transparent md:w-28" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-[#071B17] to-transparent md:w-28" />
         <motion.div
           className="flex gap-6 px-3"
           animate={{ x: ["0%", "-50%"] }}
@@ -38,17 +47,19 @@ export default function Testimonials() {
           {scrollItems.map((t, i) => (
             <div
               key={i}
-              className="min-w-[320px] md:min-w-[400px] bg-slate-800 border border-slate-700 p-8 rounded-2xl shrink-0"
+              className="min-w-[320px] shrink-0 rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-sm md:min-w-[400px]"
             >
-              <div className="flex text-[#F5A623] mb-6">
+              <div className="mb-6 flex text-amber-300">
                 {[...Array(t.rating)].map((_, idx) => (
-                  <Star key={idx} className="w-5 h-5 fill-current" />
+                  <Star key={idx} className="h-4 w-4 fill-current" />
                 ))}
               </div>
-              <p className="text-slate-300 text-lg italic mb-6 leading-relaxed">"{t.text}"</p>
-              <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-700">
-                <p className="font-semibold text-white">{t.name}</p>
-                <p className="text-sm text-slate-500">{t.date}</p>
+              <p className="mb-6 font-heading text-lg italic leading-relaxed text-emerald-50/90">
+                “{t.text}”
+              </p>
+              <div className="mt-auto flex items-center justify-between border-t border-white/10 pt-4">
+                <p className="text-sm font-semibold text-white">{t.name}</p>
+                <p className="text-xs uppercase tracking-[0.14em] text-emerald-50/40">{t.date}</p>
               </div>
             </div>
           ))}
