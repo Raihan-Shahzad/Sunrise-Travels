@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronRight, User, FileText, Loader2, MessageCircle } from "lucide-react";
+import { Check, ChevronRight, User, FileText, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import PageHero from "@/components/PageHero";
 import { WHATSAPP_NUMBER } from "@/lib/site-config";
-
-const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 type Service = "nadra" | "visa" | "passport";
 
@@ -85,7 +83,6 @@ export default function AppointmentsPage() {
   const [notes, setNotes] = useState("");
   const [serviceError, setServiceError] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
-  const [loading, setLoading] = useState(false);
 
   const requiresQueryDescription = subService.startsWith("Other ");
 
@@ -137,33 +134,13 @@ export default function AppointmentsPage() {
     }
   }
 
-  async function handleSubmit() {
+  function handleSubmit() {
     const nextErrors = validateDetails();
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
       setStep(1);
       return;
     }
-
-    setLoading(true);
-    const bookingRequest = fetch(`${BASE}/api/appointments`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        service,
-        subService,
-        fullName: name.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
-        notes: notes.trim() || null,
-      }),
-      keepalive: true,
-    });
-    void bookingRequest.then((res) => {
-      if (!res.ok) console.error("Appointment request could not be saved.", res.status);
-    }).catch((requestError: unknown) => {
-      console.error("Appointment request could not be saved.", requestError);
-    });
 
     const message = [
       "Hello Sunrise Travels, I would like to book a free appointment.",
@@ -181,7 +158,6 @@ export default function AppointmentsPage() {
     ].join("\n");
 
     window.location.assign(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`);
-    window.setTimeout(() => setLoading(false), 1500);
   }
 
   return (
@@ -415,17 +391,13 @@ export default function AppointmentsPage() {
               </div>
 
               <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={() => setStep(1)} className="px-8 h-12" disabled={loading}>Back</Button>
+                <Button type="button" variant="outline" onClick={() => setStep(1)} className="px-8 h-12">Back</Button>
                 <Button
+                  type="button"
                   onClick={handleSubmit}
-                  disabled={loading}
                   className="bg-primary hover:bg-primary/90 text-white px-10 h-12 font-semibold"
                 >
-                  {loading ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Opening WhatsApp…</>
-                  ) : (
-                    <><MessageCircle className="w-4 h-4 mr-2" /> Confirm on WhatsApp</>
-                  )}
+                  <><MessageCircle className="w-4 h-4 mr-2" /> Confirm on WhatsApp</>
                 </Button>
               </div>
               <p className="text-center text-xs text-slate-500">Free · No obligation · Opens WhatsApp with your appointment details ready</p>
