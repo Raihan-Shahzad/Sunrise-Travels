@@ -48,29 +48,44 @@ router.post("/appointments", async (req, res) => {
       res.status(400).json({ error: "Please choose a valid appointment type." });
       return;
     }
+    if (!data.fullName.trim() || data.fullName.trim().length < 2) {
+      res.status(400).json({ error: "Please enter your full name." });
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(data.email.trim())) {
+      res.status(400).json({ error: "Please enter a valid email address." });
+      return;
+    }
+    const phoneDigits = data.phone.replace(/\D/g, "");
+    if (phoneDigits.length < 7 || phoneDigits.length > 15) {
+      res.status(400).json({ error: "Please enter a valid phone number." });
+      return;
+    }
     if (data.subService.startsWith("Other ") && !data.notes?.trim()) {
       res.status(400).json({ error: "Please describe what you need help with." });
       return;
     }
-    if (!APPOINTMENT_TIMES.includes(data.appointmentTime)) {
+    if (data.appointmentTime && !APPOINTMENT_TIMES.includes(data.appointmentTime)) {
       res.status(400).json({ error: "Please choose a valid appointment time." });
       return;
     }
 
-    const existing = await db
-      .select({ id: appointmentsTable.id })
-      .from(appointmentsTable)
-      .where(
-        and(
-          eq(appointmentsTable.appointmentDate, data.appointmentDate),
-          eq(appointmentsTable.appointmentTime, data.appointmentTime),
-        ),
-      )
-      .limit(2);
+    if (data.appointmentDate && data.appointmentTime) {
+      const existing = await db
+        .select({ id: appointmentsTable.id })
+        .from(appointmentsTable)
+        .where(
+          and(
+            eq(appointmentsTable.appointmentDate, data.appointmentDate),
+            eq(appointmentsTable.appointmentTime, data.appointmentTime),
+          ),
+        )
+        .limit(2);
 
-    if (existing.length >= 1) {
-      res.status(409).json({ error: "This time slot is fully booked. Please choose another time." });
-      return;
+      if (existing.length >= 1) {
+        res.status(409).json({ error: "This time slot is fully booked. Please choose another time." });
+        return;
+      }
     }
 
     const [created] = await db
@@ -79,24 +94,35 @@ router.post("/appointments", async (req, res) => {
       .returning();
 
     const reference = formatReference(created.id);
-    try {
-      await createAppointmentCalendarEvent(created, reference);
+    if (created.appointmentDate && created.appointmentTime) {
+      try {
+        await createAppointmentCalendarEvent(created, reference);
+        logger.info(
+          {
+            event: "appointment.calendar_synced",
+            reference,
+            appointmentId: created.id,
+          },
+          "Appointment added to Google Calendar",
+        );
+      } catch {
+        logger.error(
+          {
+            event: "appointment.calendar_sync_failed",
+            reference,
+            appointmentId: created.id,
+          },
+          "Appointment saved, but Google Calendar event creation failed",
+        );
+      }
+    } else {
       logger.info(
         {
-          event: "appointment.calendar_synced",
+          event: "appointment.calendar_sync_skipped",
           reference,
           appointmentId: created.id,
         },
-        "Appointment added to Google Calendar",
-      );
-    } catch {
-      logger.error(
-        {
-          event: "appointment.calendar_sync_failed",
-          reference,
-          appointmentId: created.id,
-        },
-        "Appointment saved, but Google Calendar event creation failed",
+        "Appointment saved without a scheduled date/time; calendar sync skipped",
       );
     }
 
@@ -159,6 +185,7 @@ router.get("/appointments/slots", async (req, res) => {
 
     const slotCount: Record<string, number> = {};
     for (const row of booked) {
+      if (!row.time) continue;
       slotCount[row.time] = (slotCount[row.time] ?? 0) + 1;
     }
 

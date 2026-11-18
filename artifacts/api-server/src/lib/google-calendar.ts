@@ -152,7 +152,13 @@ function buildCalendarEvent(
   appointment: Appointment,
   reference: string,
 ): CalendarEvent {
-  const { hour, minute } = to24HourTime(appointment.appointmentTime);
+  const { appointmentDate, appointmentTime } = appointment;
+  if (!appointmentDate || !appointmentTime) {
+    throw new GoogleCalendarError(
+      "Appointment needs a date and time before it can be added to Google Calendar",
+    );
+  }
+  const { hour, minute } = to24HourTime(appointmentTime);
   const startMinuteOfDay = hour * 60 + minute;
   const endMinuteOfDay = startMinuteOfDay + 30;
   const stableEventId = `stapp${appointment.id.toString(32)}`;
@@ -166,14 +172,14 @@ function buildCalendarEvent(
     transparency: "opaque",
     start: {
       dateTime: formatLocalDateTime(
-        appointment.appointmentDate,
+        appointmentDate,
         startMinuteOfDay,
       ),
       timeZone: TIME_ZONE,
     },
     end: {
       dateTime: formatLocalDateTime(
-        appointment.appointmentDate,
+        appointmentDate,
         endMinuteOfDay,
       ),
       timeZone: TIME_ZONE,

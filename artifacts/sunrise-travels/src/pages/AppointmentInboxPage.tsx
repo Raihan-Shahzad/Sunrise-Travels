@@ -8,8 +8,8 @@ type Appointment = {
   reference: string;
   service: "nadra" | "visa" | "passport";
   subService: string;
-  appointmentDate: string;
-  appointmentTime: string;
+  appointmentDate: string | null;
+  appointmentTime: string | null;
   fullName: string;
   email: string;
   phone: string;
@@ -92,8 +92,14 @@ export default function AppointmentInboxPage() {
                     <p className="text-slate-600 text-sm mt-1">{appointment.subService}</p>
                   </div>
                   <div className="grid sm:grid-cols-2 gap-x-6 gap-y-3 text-sm text-slate-600 lg:text-right">
-                    <span className="flex items-center gap-2 lg:justify-end"><Calendar className="w-4 h-4 text-primary" />{appointment.appointmentDate}</span>
-                    <span className="flex items-center gap-2 lg:justify-end"><Clock className="w-4 h-4 text-primary" />{appointment.appointmentTime}</span>
+                    {appointment.appointmentDate && appointment.appointmentTime ? (
+                      <>
+                        <span className="flex items-center gap-2 lg:justify-end"><Calendar className="w-4 h-4 text-primary" />{appointment.appointmentDate}</span>
+                        <span className="flex items-center gap-2 lg:justify-end"><Clock className="w-4 h-4 text-primary" />{appointment.appointmentTime}</span>
+                      </>
+                    ) : (
+                      <span className="flex items-center gap-2 lg:justify-end sm:col-span-2"><Calendar className="w-4 h-4 text-primary" />Date &amp; time to arrange on WhatsApp</span>
+                    )}
                     <a href={`tel:${appointment.phone}`} className="flex items-center gap-2 lg:justify-end hover:text-primary"><Phone className="w-4 h-4 text-primary" />{appointment.phone}</a>
                     <a href={`mailto:${appointment.email}`} className="flex items-center gap-2 lg:justify-end hover:text-primary"><Mail className="w-4 h-4 text-primary" />{appointment.email}</a>
                   </div>
