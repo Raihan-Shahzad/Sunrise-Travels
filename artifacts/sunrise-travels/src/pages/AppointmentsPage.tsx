@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronRight, Calendar, Clock, User, FileText, Loader2, CheckCircle2 } from "lucide-react";
+import { Check, ChevronRight, Calendar, Clock, User, FileText, Loader2, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import PageHero from "@/components/PageHero";
+import { WHATSAPP_NUMBER } from "@/lib/site-config";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -103,8 +104,6 @@ export default function AppointmentsPage() {
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
-  const [booked, setBooked] = useState(false);
-  const [bookingRef, setBookingRef] = useState("");
   const [error, setError] = useState("");
   const [slots, setSlots] = useState<Record<string, boolean>>({});
   const [slotsLoading, setSlotsLoading] = useState(false);
@@ -173,60 +172,29 @@ export default function AppointmentsPage() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data?.error || "Failed to book appointment");
       }
-      const data = await res.json();
-      setBookingRef(data.reference);
-      setBooked(true);
+      const data = await res.json().catch(() => ({}));
+      const message = [
+        "Hello Sunrise Travels, I would like to book a free appointment.",
+        "",
+        `Service: ${SERVICES[service!].label}`,
+        `Type: ${subService}`,
+        `Preferred date: ${selectedDate ? formatDateLabel(selectedDate) : dateKey}`,
+        `Preferred time: ${time}`,
+        ...(data?.reference ? [`Reference: ${data.reference}`] : []),
+        "",
+        "My details:",
+        `Name: ${name.trim()}`,
+        `Email: ${email.trim()}`,
+        `Phone: ${phone.trim()}`,
+        ...(notes.trim() ? ["", `Notes: ${notes.trim()}`] : []),
+        "",
+        "Please confirm my appointment. Thank you.",
+      ].join("\n");
+      window.location.assign(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
     }
-  }
-
-  if (booked) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="bg-white rounded-3xl shadow-xl p-10 max-w-md w-full text-center border border-slate-100"
-        >
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-10 h-10 text-green-600" />
-          </div>
-          <h2 className="font-heading text-3xl font-bold text-slate-900 mb-3">Appointment Booked!</h2>
-          <p className="text-slate-500 mb-6">We'll confirm your appointment by phone or email shortly.</p>
-          <div className="bg-slate-50 rounded-2xl p-6 text-left space-y-3 mb-8 border border-slate-100">
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-500 font-medium">Reference</span>
-              <span className="font-bold text-primary">{bookingRef}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-500 font-medium">Service</span>
-              <span className="font-semibold text-slate-900">{SERVICES[service!].label}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-500 font-medium">Type</span>
-              <span className="font-semibold text-slate-900 text-right max-w-[180px]">{subService}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-500 font-medium">Date</span>
-              <span className="font-semibold text-slate-900">{selectedDate ? formatDateLabel(selectedDate) : dateKey}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-500 font-medium">Time</span>
-              <span className="font-semibold text-slate-900">{time}</span>
-            </div>
-          </div>
-          <Button
-            onClick={() => { setBooked(false); setStep(0); setService(null); setSubService(""); setDateKey(""); setTime(""); setName(""); setEmail(""); setPhone(""); setNotes(""); }}
-            className="w-full bg-primary hover:bg-primary/90 text-white h-12"
-          >
-            Book Another Appointment
-          </Button>
-        </motion.div>
-      </div>
-    );
   }
 
   return (
@@ -477,7 +445,7 @@ export default function AppointmentsPage() {
             <motion.div key="step3" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="space-y-8">
               <div>
                 <h2 className="font-heading text-2xl font-bold text-slate-900 mb-2">Confirm your Appointment</h2>
-                <p className="text-slate-500">Please review the details below before confirming.</p>
+                <p className="text-slate-500">Please review the details below, then send your request on WhatsApp — your appointment details will be ready to send.</p>
               </div>
 
               <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
@@ -522,12 +490,13 @@ export default function AppointmentsPage() {
                   className="bg-primary hover:bg-primary/90 text-white px-10 h-12 font-semibold"
                 >
                   {loading ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Booking…</>
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Opening WhatsApp…</>
                   ) : (
-                    <><Check className="w-4 h-4 mr-2" /> Confirm Appointment</>
+                    <><MessageCircle className="w-4 h-4 mr-2" /> Confirm on WhatsApp</>
                   )}
                 </Button>
               </div>
+              <p className="text-center text-xs text-slate-500">Free · No obligation · Opens WhatsApp with your appointment details ready</p>
             </motion.div>
           )}
         </AnimatePresence>
