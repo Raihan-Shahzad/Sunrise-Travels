@@ -86,7 +86,6 @@ export default function AppointmentsPage() {
   const [serviceError, setServiceError] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const requiresQueryDescription = subService.startsWith("Other ");
 
@@ -147,54 +146,42 @@ export default function AppointmentsPage() {
     }
 
     setLoading(true);
-    setError("");
-    let bookingReference: string | undefined;
-    let bookingSaved = false;
-
-    try {
-      const res = await fetch(`${BASE}/api/appointments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          service,
-          subService,
-          fullName: name.trim(),
-          email: email.trim(),
-          phone: phone.trim(),
-          notes: notes.trim() || null,
-        }),
-      });
-      if (!res.ok) {
-        throw new Error("Booking request was not saved");
-      }
-      const data = await res.json().catch(() => ({}));
-      bookingReference = typeof data?.reference === "string" ? data.reference : undefined;
-      bookingSaved = true;
-    } catch {
-      // Keep the WhatsApp handoff available if the booking API is temporarily unavailable.
-    }
+    const bookingRequest = fetch(`${BASE}/api/appointments`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        service,
+        subService,
+        fullName: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        notes: notes.trim() || null,
+      }),
+      keepalive: true,
+    });
+    void bookingRequest.then((res) => {
+      if (!res.ok) console.error("Appointment request could not be saved.", res.status);
+    }).catch((requestError: unknown) => {
+      console.error("Appointment request could not be saved.", requestError);
+    });
 
     const message = [
       "Hello Sunrise Travels, I would like to book a free appointment.",
       "",
       `Service: ${SERVICES[service!].label}`,
       `Type: ${subService}`,
-      ...(bookingReference ? [`Reference: ${bookingReference}`] : []),
       "",
       "My details:",
       `Name: ${name.trim()}`,
       `Email: ${email.trim()}`,
       `Phone: ${phone.trim()}`,
       ...(notes.trim() ? ["", `Notes: ${notes.trim()}`] : []),
-      ...(!bookingSaved
-        ? ["", "The website could not confirm whether this request was saved. Please check before creating a duplicate booking."]
-        : []),
       "",
       "Please confirm my appointment. Thank you.",
     ].join("\n");
 
     window.location.assign(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`);
-    setLoading(false);
+    window.setTimeout(() => setLoading(false), 1500);
   }
 
   return (
@@ -426,12 +413,6 @@ export default function AppointmentsPage() {
                   </div>
                 </div>
               </div>
-
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm">
-                  {error}
-                </div>
-              )}
 
               <div className="flex justify-between pt-4">
                 <Button variant="outline" onClick={() => setStep(1)} className="px-8 h-12" disabled={loading}>Back</Button>
