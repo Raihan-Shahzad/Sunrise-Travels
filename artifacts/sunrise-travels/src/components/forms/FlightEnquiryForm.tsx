@@ -4,6 +4,7 @@ import {
   User, Mail, Phone, ArrowRight, AlertCircle, Loader2, ChevronDown,
   Plus, Minus, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
+import { getCountries, getCountryCallingCode, isValidPhoneNumber, parsePhoneNumber, type CountryCode } from "libphonenumber-js";
 import { cn } from "@/lib/utils";
 import { WHATSAPP_NUMBER } from "@/lib/site-config";
 
@@ -27,60 +28,126 @@ const EMPTY_MULTI_CITY: MultiCityLeg[] = [
   { from: "", to: "", date: "" },
 ];
 
+const REGION_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
+const PHONE_COUNTRIES = getCountries()
+  .map((country) => ({
+    country,
+    name: REGION_NAMES.of(country) ?? country,
+    callingCode: getCountryCallingCode(country),
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+function localDateKey(date = new Date()) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function isValidDateKey(value: string) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const [, year, month, day] = match.map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+}
+
 function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(email.trim());
+  const value = email.trim();
+  return value.length <= 254 && /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(value);
 }
 
-function isValidUkPhone(phone: string) {
-  const compact = phone.replace(/[()\s.-]/g, "");
-  return /^(?:0\d{10}|\+44\d{10})$/.test(compact);
-}
-
-function validate(fields: Fields, tripType: TripType, pax: Pax, multiCityLegs: MultiCityLeg[]): Errors {
+function validate(
+  fields: Fields,
+  tripType: TripType,
+  pax: Pax,
+  multiCityLegs: MultiCityLeg[],
+  phoneCountry: CountryCode,
+): Errors {
   const e: Errors = {};
-  const today = new Date(new Date().toDateString());
+  const today = localDateKey();
 
   if (tripType === "multicity") {
     e.multiCity = multiCityLegs.map((leg, index) => {
       const legErrors: Partial<Record<keyof MultiCityLeg, string>> = {};
-      if (!leg.from.trim()) legErrors.from = "Departure city or airport required";
-      if (!leg.to.trim()) legErrors.to = "Destination required";
+      const from = leg.from.trim();
+      const to = leg.to.trim();
+      if (!from) legErrors.from = "Departure city or airport required";
+      else if (from.length < 2 || from.length > 100) legErrors.from = "Enter 2–100 characters";
+      if (!to) legErrors.to = "Destination required";
+      else if (to.length < 2 || to.length > 100) legErrors.to = "Enter 2–100 characters";
+      else if (from && from.localeCompare(to, undefined, { sensitivity: "base" }) === 0) {
+        legErrors.to = "Choose a destination different from departure";
+      }
       if (!leg.date) {
         legErrors.date = "Date required";
-      } else if (new Date(leg.date) < today) {
+      } else if (!isValidDateKey(leg.date)) {
+        legErrors.date = "Choose a valid date";
+      } else if (leg.date < today) {
         legErrors.date = "Must be today or later";
-      } else if (index > 0 && multiCityLegs[index - 1].date && new Date(leg.date) < new Date(multiCityLegs[index - 1].date)) {
+      } else if (
+        index > 0 &&
+        isValidDateKey(multiCityLegs[index - 1].date) &&
+        leg.date < multiCityLegs[index - 1].date
+      ) {
         legErrors.date = "Must be on or after the previous leg";
       }
       return legErrors;
     });
     if (e.multiCity.every((leg) => Object.keys(leg).length === 0)) delete e.multiCity;
   } else {
-    if (!fields.from.trim()) e.from = "Departure city or airport required";
-    if (!fields.to.trim()) e.to = "Destination required";
+    const from = fields.from.trim();
+    const to = fields.to.trim();
+    if (!from) e.from = "Departure city or airport required";
+    else if (from.length < 2 || from.length > 100) e.from = "Enter 2–100 characters";
+    if (!to) e.to = "Destination required";
+    else if (to.length < 2 || to.length > 100) e.to = "Enter 2–100 characters";
+    else if (from && from.localeCompare(to, undefined, { sensitivity: "base" }) === 0) {
+      e.to = "Choose a destination different from departure";
+    }
     if (!fields.depart) {
       e.depart = "Departure date required";
-    } else if (new Date(fields.depart) < today) {
+    } else if (!isValidDateKey(fields.depart)) {
+      e.depart = "Choose a valid date";
+    } else if (fields.depart < today) {
       e.depart = "Must be today or later";
     }
     if (tripType === "return") {
       if (!fields.returnDate) e.returnDate = "Return date required";
-      else if (fields.depart && new Date(fields.returnDate) <= new Date(fields.depart))
+      else if (!isValidDateKey(fields.returnDate)) e.returnDate = "Choose a valid date";
+      else if (isValidDateKey(fields.depart) && fields.returnDate <= fields.depart)
         e.returnDate = "Must be after departure";
     }
   }
-  if (pax.adults + pax.children + pax.infants < 1) e.passengers = "Add at least 1 passenger";
+  const passengerCount = pax.adults + pax.children + pax.infants;
+  if (passengerCount < 1) e.passengers = "Add at least 1 passenger";
+  else if (passengerCount > 9) e.passengers = "Maximum 9 passengers";
   if (pax.infants > pax.adults) e.passengers = "Infants cannot exceed adults";
   if (!fields.name.trim()) e.name = "Full name required";
+  else if (fields.name.trim().length < 2) e.name = "Enter at least 2 characters";
+  else if (fields.name.trim().length > 100) e.name = "Name must be 100 characters or fewer";
   if (!fields.email.trim()) e.email = "Email required";
   else if (!isValidEmail(fields.email)) e.email = "Enter a valid email address";
   if (!fields.phone.trim()) e.phone = "Phone required";
-  else if (!isValidUkPhone(fields.phone)) e.phone = "Enter a valid UK number, e.g. 01582 732007";
+  else if (!isValidPhoneNumber(fields.phone.trim(), phoneCountry)) {
+    e.phone = "Enter a valid phone number for the selected country";
+  }
   return e;
 }
 
-function FieldLabel({ children }: { children: React.ReactNode }) {
-  return <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">{children}</label>;
+function FieldLabel({
+  children,
+  required = false,
+  htmlFor,
+}: {
+  children: React.ReactNode;
+  required?: boolean;
+  htmlFor?: string;
+}) {
+  return (
+    <label htmlFor={htmlFor} className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
+      {children}
+      {required && <span className="ml-1 text-red-600" aria-hidden="true">*</span>}
+      {required && <span className="sr-only"> required</span>}
+    </label>
+  );
 }
 function FieldError({ msg }: { msg?: string }) {
   if (!msg) return null;
@@ -92,7 +159,11 @@ function FieldError({ msg }: { msg?: string }) {
 }
 function Field({ icon: Icon, placeholder, type = "text", value, onChange, error, ...rest }: {
   icon: React.ElementType; placeholder: string; type?: string;
-  value: string; onChange: (v: string) => void; error?: string; min?: string; onBlur?: () => void;
+  value: string; onChange: (v: string) => void; error?: string;
+  id?: string; required?: boolean; autoComplete?: string;
+  maxLength?: number;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  onBlur?: () => void;
 }) {
   return (
     <div>
@@ -102,10 +173,17 @@ function Field({ icon: Icon, placeholder, type = "text", value, onChange, error,
       )}>
         <Icon className={cn("w-4 h-4 shrink-0", error ? "text-red-400" : "text-slate-400")} />
         <input
+          id={rest.id}
           type={type} placeholder={placeholder} value={value}
           onChange={(e) => onChange(e.target.value)}
+          required={rest.required}
+          aria-required={rest.required}
+          aria-invalid={!!error}
+          autoComplete={rest.autoComplete}
+          inputMode={rest.inputMode}
+          maxLength={rest.maxLength}
           className="flex-1 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 outline-none min-w-0"
-          {...rest}
+          onBlur={rest.onBlur}
         />
       </div>
       <FieldError msg={error} />
@@ -113,7 +191,8 @@ function Field({ icon: Icon, placeholder, type = "text", value, onChange, error,
   );
 }
 
-function DateField({ label, value, min, error, onChange, onBlur, placeholder }: {
+function DateField({ id, label, value, min, error, onChange, onBlur, placeholder }: {
+  id?: string;
   label: string;
   value: string;
   min?: string;
@@ -123,7 +202,7 @@ function DateField({ label, value, min, error, onChange, onBlur, placeholder }: 
   placeholder: string;
 }) {
   const [open, setOpen] = useState(false);
-  const initialDate = value || min || new Date().toISOString().slice(0, 10);
+  const initialDate = value || min || localDateKey();
   const [viewMonth, setViewMonth] = useState(() => {
     const [year, month] = initialDate.split("-").map(Number);
     return new Date(year, month - 1, 1);
@@ -152,7 +231,7 @@ function DateField({ label, value, min, error, onChange, onBlur, placeholder }: 
   const monthLabel = viewMonth.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
   const monthStartDay = (viewMonth.getDay() + 6) % 7;
   const daysInMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1, 0).getDate();
-  const todayKey = new Date().toISOString().slice(0, 10);
+  const todayKey = localDateKey();
   const previousMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1, 1);
   const previousMonthDisabled = minDate
     ? previousMonth < new Date(minDate.getFullYear(), minDate.getMonth(), 1)
@@ -169,12 +248,15 @@ function DateField({ label, value, min, error, onChange, onBlur, placeholder }: 
 
   return (
     <div ref={pickerRef} className="relative">
-      <FieldLabel>{label}</FieldLabel>
+      <FieldLabel required htmlFor={id}>{label}</FieldLabel>
       <button
+        id={id}
         type="button"
         onClick={() => setOpen((current) => !current)}
         aria-expanded={open}
         aria-haspopup="dialog"
+          aria-required="true"
+          aria-invalid={!!error}
         className={cn(
           "relative w-full flex items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition-all",
           error
@@ -320,7 +402,8 @@ function PaxRow({ label, sub, value, min, max, onChange }: {
   );
 }
 
-function PassengerPicker({ pax, onChange, error }: {
+function PassengerPicker({ id, pax, onChange, error }: {
+  id?: string;
   pax: Pax; onChange: (p: Pax) => void; error?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -346,8 +429,11 @@ function PassengerPicker({ pax, onChange, error }: {
   return (
     <div ref={ref} className="relative">
       <button
+        id={id}
         type="button"
         onClick={() => setOpen((o) => !o)}
+        aria-required="true"
+        aria-invalid={!!error}
         className={cn(
           "w-full flex items-center gap-2.5 bg-slate-50 border rounded-xl px-3.5 py-3 transition-colors text-left",
           error ? "border-red-400" : open ? "border-primary bg-white" : "border-slate-200 hover:border-slate-300"
@@ -393,34 +479,42 @@ function PassengerPicker({ pax, onChange, error }: {
 export default function FlightEnquiryForm() {
   const [tripType, setTripType] = useState<TripType>("return");
   const [fields, setFields] = useState<Fields>(EMPTY_FIELDS);
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>("GB");
   const [pax, setPax] = useState<Pax>(EMPTY_PAX);
   const [multiCityLegs, setMultiCityLegs] = useState<MultiCityLeg[]>(EMPTY_MULTI_CITY);
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState<Set<keyof Fields | "passengers">>(new Set());
   const [formState, setFormState] = useState<FormState>("idle");
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = localDateKey();
 
   function setField(k: keyof Fields, v: string) {
     const next = { ...fields, [k]: v };
     setFields(next);
-    if (touched.has(k)) setErrors(validate(next, tripType, pax, multiCityLegs));
+    if (touched.has(k)) setErrors(validate(next, tripType, pax, multiCityLegs, phoneCountry));
+  }
+
+  function handlePhoneCountryChange(country: CountryCode) {
+    setPhoneCountry(country);
+    if (touched.has("phone")) {
+      setErrors(validate(fields, tripType, pax, multiCityLegs, country));
+    }
   }
 
   function touchField(k: keyof Fields) {
     setTouched((prev) => new Set([...prev, k]));
-    setErrors(validate(fields, tripType, pax, multiCityLegs));
+    setErrors(validate(fields, tripType, pax, multiCityLegs, phoneCountry));
   }
 
   function handlePaxChange(p: Pax) {
     setPax(p);
-    if (touched.has("passengers")) setErrors(validate(fields, tripType, p, multiCityLegs));
+    if (touched.has("passengers")) setErrors(validate(fields, tripType, p, multiCityLegs, phoneCountry));
   }
 
   function updateMultiCityLeg(index: number, key: keyof MultiCityLeg, value: string) {
     const next = multiCityLegs.map((leg, i) => i === index ? { ...leg, [key]: value } : leg);
     setMultiCityLegs(next);
-    if (tripType === "multicity" && errors.multiCity) setErrors(validate(fields, tripType, pax, next));
+    if (tripType === "multicity" && errors.multiCity) setErrors(validate(fields, tripType, pax, next, phoneCountry));
   }
 
   function addMultiCityLeg() {
@@ -431,17 +525,23 @@ export default function FlightEnquiryForm() {
     if (multiCityLegs.length <= 2) return;
     const next = multiCityLegs.filter((_, i) => i !== index);
     setMultiCityLegs(next);
-    setErrors(validate(fields, tripType, pax, next));
+    setErrors(validate(fields, tripType, pax, next, phoneCountry));
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const allKeys = [...Object.keys(EMPTY_FIELDS), "passengers"] as (keyof Fields | "passengers")[];
     setTouched(new Set(allKeys));
-    const errs = validate(fields, tripType, pax, multiCityLegs);
+    const errs = validate(fields, tripType, pax, multiCityLegs, phoneCountry);
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
     setFormState("loading");
+    const phoneNumber = parsePhoneNumber(fields.phone.trim(), phoneCountry);
+    if (!phoneNumber) {
+      setFormState("idle");
+      setErrors({ ...errs, phone: "Enter a valid phone number for the selected country" });
+      return;
+    }
     const itinerary = tripType === "multicity"
       ? multiCityLegs.map((leg, i) => `Leg ${i + 1}: ${leg.from} to ${leg.to} on ${leg.date}`).join("\n")
       : `From: ${fields.from}\nTo: ${fields.to}\nDeparture: ${fields.depart}${tripType === "return" ? `\nReturn: ${fields.returnDate}` : ""}`;
@@ -455,7 +555,7 @@ export default function FlightEnquiryForm() {
       "My details:",
       `Name: ${fields.name}`,
       `Email: ${fields.email}`,
-      `Phone: ${fields.phone}`,
+      `Phone: ${phoneNumber.formatInternational()}`,
       "",
       "Please share your best available fare. Thank you.",
     ].join("\n");
@@ -506,16 +606,17 @@ export default function FlightEnquiryForm() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <FieldLabel>From</FieldLabel>
-                      <Field icon={PlaneTakeoff} placeholder="e.g. London LHR" value={leg.from} onChange={(v) => updateMultiCityLeg(index, "from", v)} error={legErrors?.from} />
+                      <FieldLabel required htmlFor={`multi-city-${index}-from`}>From</FieldLabel>
+                      <Field id={`multi-city-${index}-from`} icon={PlaneTakeoff} placeholder="e.g. London LHR" value={leg.from} onChange={(v) => updateMultiCityLeg(index, "from", v)} error={legErrors?.from} required maxLength={100} />
                     </div>
                     <div>
-                      <FieldLabel>To</FieldLabel>
-                      <Field icon={PlaneLanding} placeholder="e.g. Islamabad ISB" value={leg.to} onChange={(v) => updateMultiCityLeg(index, "to", v)} error={legErrors?.to} />
+                      <FieldLabel required htmlFor={`multi-city-${index}-to`}>To</FieldLabel>
+                      <Field id={`multi-city-${index}-to`} icon={PlaneLanding} placeholder="e.g. Islamabad ISB" value={leg.to} onChange={(v) => updateMultiCityLeg(index, "to", v)} error={legErrors?.to} required maxLength={100} />
                     </div>
                   </div>
                   <div className="mt-3">
                     <DateField
+                      id={`multi-city-${index}-date`}
                       label="Date"
                       placeholder="Choose travel date"
                       min={today}
@@ -537,37 +638,39 @@ export default function FlightEnquiryForm() {
           <>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <FieldLabel>From</FieldLabel>
-                <Field icon={PlaneTakeoff} placeholder="e.g. London LHR" value={fields.from} onChange={(v) => setField("from", v)} onBlur={() => touchField("from")} error={errors.from} />
+                <FieldLabel required htmlFor="flight-from">From</FieldLabel>
+                <Field id="flight-from" icon={PlaneTakeoff} placeholder="e.g. London LHR" value={fields.from} onChange={(v) => setField("from", v)} onBlur={() => touchField("from")} error={touched.has("from") ? errors.from : undefined} required maxLength={100} />
               </div>
               <div>
-                <FieldLabel>To</FieldLabel>
-                <Field icon={PlaneLanding} placeholder="e.g. Islamabad ISB" value={fields.to} onChange={(v) => setField("to", v)} onBlur={() => touchField("to")} error={errors.to} />
+                <FieldLabel required htmlFor="flight-to">To</FieldLabel>
+                <Field id="flight-to" icon={PlaneLanding} placeholder="e.g. Islamabad ISB" value={fields.to} onChange={(v) => setField("to", v)} onBlur={() => touchField("to")} error={touched.has("to") ? errors.to : undefined} required maxLength={100} />
               </div>
             </div>
 
             <div className={cn("grid gap-3", tripType === "return" ? "grid-cols-2" : "grid-cols-1")}>
               <div>
                 <DateField
+                  id="flight-departure-date"
                   label="Departure Date"
                   placeholder="Choose departure date"
                   min={today}
                   value={fields.depart}
                   onChange={(v) => setField("depart", v)}
                   onBlur={() => touchField("depart")}
-                  error={errors.depart}
+                  error={touched.has("depart") ? errors.depart : undefined}
                 />
               </div>
               {tripType === "return" && (
                 <div>
                   <DateField
+                    id="flight-return-date"
                     label="Return Date"
                     placeholder="Choose return date"
                     min={fields.depart || today}
                     value={fields.returnDate}
                     onChange={(v) => setField("returnDate", v)}
                     onBlur={() => touchField("returnDate")}
-                    error={errors.returnDate}
+                    error={touched.has("returnDate") ? errors.returnDate : undefined}
                   />
                 </div>
               )}
@@ -576,8 +679,9 @@ export default function FlightEnquiryForm() {
         )}
 
         <div>
-          <FieldLabel>Passengers</FieldLabel>
+          <FieldLabel required htmlFor="flight-passengers">Passengers</FieldLabel>
           <PassengerPicker
+            id="flight-passengers"
             pax={pax}
             onChange={handlePaxChange}
             error={touched.has("passengers") ? errors.passengers : undefined}
@@ -589,17 +693,52 @@ export default function FlightEnquiryForm() {
         </div>
 
         <div>
-          <FieldLabel>Full Name</FieldLabel>
-          <Field icon={User} placeholder="Your full name" value={fields.name} onChange={(v) => setField("name", v)} onBlur={() => touchField("name")} error={errors.name} />
+          <FieldLabel required htmlFor="flight-name">Full Name</FieldLabel>
+          <Field id="flight-name" icon={User} placeholder="Your full name" value={fields.name} onChange={(v) => setField("name", v)} onBlur={() => touchField("name")} error={touched.has("name") ? errors.name : undefined} required autoComplete="name" maxLength={100} />
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <FieldLabel>Email</FieldLabel>
-            <Field icon={Mail} placeholder="you@example.com" type="email" value={fields.email} onChange={(v) => setField("email", v)} onBlur={() => touchField("email")} error={errors.email} />
+            <FieldLabel required htmlFor="flight-email">Email</FieldLabel>
+            <Field id="flight-email" icon={Mail} placeholder="you@example.com" type="email" value={fields.email} onChange={(v) => setField("email", v)} onBlur={() => touchField("email")} error={touched.has("email") ? errors.email : undefined} required autoComplete="email" inputMode="email" maxLength={254} />
           </div>
           <div>
-            <FieldLabel>Phone</FieldLabel>
-              <Field icon={Phone} placeholder="01582 732007 or +44 7700 000000" type="tel" value={fields.phone} onChange={(v) => setField("phone", v)} onBlur={() => touchField("phone")} error={errors.phone} />
+            <FieldLabel required htmlFor="flight-phone-number">Phone</FieldLabel>
+            <div className={cn(
+              "flex min-w-0 items-center gap-2.5 rounded-xl border bg-slate-50 px-3.5 py-3 transition-colors focus-within:border-primary focus-within:bg-white",
+              touched.has("phone") && errors.phone ? "border-red-400" : "border-slate-200"
+            )}>
+              <Phone className={cn("h-4 w-4 shrink-0", touched.has("phone") && errors.phone ? "text-red-400" : "text-slate-400")} />
+              <label htmlFor="flight-phone-country" className="sr-only">Phone country calling code</label>
+              <select
+                id="flight-phone-country"
+                value={phoneCountry}
+                onChange={(event) => handlePhoneCountryChange(event.target.value as CountryCode)}
+                aria-label="Phone country calling code"
+                aria-required="true"
+                aria-invalid={touched.has("phone") && !!errors.phone}
+                className="w-[58%] min-w-0 shrink-0 border-r border-slate-200 bg-transparent pr-2 text-xs text-slate-700 outline-none"
+              >
+                {PHONE_COUNTRIES.map(({ country, name, callingCode }) => (
+                  <option key={country} value={country}>{name} (+{callingCode})</option>
+                ))}
+              </select>
+              <input
+                id="flight-phone-number"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel-national"
+                required
+                aria-required="true"
+                aria-invalid={touched.has("phone") && !!errors.phone}
+                maxLength={30}
+                placeholder="7700 900123"
+                value={fields.phone}
+                onChange={(event) => setField("phone", event.target.value)}
+                onBlur={() => touchField("phone")}
+                className="min-w-0 flex-1 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 outline-none"
+              />
+            </div>
+            <FieldError msg={touched.has("phone") ? errors.phone : undefined} />
           </div>
         </div>
 
