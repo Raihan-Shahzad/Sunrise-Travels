@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronRight, Calendar, Clock, User, FileText, Loader2, MessageCircle } from "lucide-react";
+import { Check, ChevronRight, User, FileText, Loader2, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -62,95 +62,90 @@ const SERVICES = {
   },
 };
 
-const TIMES = [
-  "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
-  "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM",
-  "03:00 PM", "03:30 PM", "04:00 PM", "04:30 PM",
-  "05:00 PM",
-];
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+const PHONE_PATTERN = /^[+]?[\d\s().-]+$/;
 
-function getAvailableDates(count = 14) {
-  const dates: Date[] = [];
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  while (dates.length < count) {
-    d.setDate(d.getDate() + 1);
-    if (d.getDay() !== 0 && d.getDay() !== 6) {
-      dates.push(new Date(d));
-    }
-  }
-  return dates;
-}
+type FieldErrors = {
+  name?: string;
+  email?: string;
+  phone?: string;
+  notes?: string;
+};
 
-function formatDateKey(d: Date) {
-  return d.toISOString().slice(0, 10);
-}
-
-function formatDateLabel(d: Date) {
-  return d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
-}
-
-const STEPS = ["Service", "Date & Time", "Your Details", "Confirm"];
+const STEPS = ["Service", "Your Details", "Confirm"];
 
 export default function AppointmentsPage() {
   const init = getInitialState();
   const [step, setStep] = useState(init.step);
   const [service, setService] = useState<Service | null>(init.service);
   const [subService, setSubService] = useState(init.subService);
-  const [dateKey, setDateKey] = useState("");
-  const [time, setTime] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+  const [serviceError, setServiceError] = useState("");
+  const [errors, setErrors] = useState<FieldErrors>({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [slots, setSlots] = useState<Record<string, boolean>>({});
-  const [slotsLoading, setSlotsLoading] = useState(false);
 
-  const dates = getAvailableDates(14);
-  const selectedDate = dates.find((d) => formatDateKey(d) === dateKey);
   const requiresQueryDescription = subService.startsWith("Other ");
 
-  const canNextStep1 = !!service && !!subService;
-  const canNextStep2 = !!dateKey && !!time;
-  const canNextStep3 =
-    !!name.trim() &&
-    !!email.trim() &&
-    !!phone.trim() &&
-    (!requiresQueryDescription || !!notes.trim());
+  function clearError(field: keyof FieldErrors) {
+    setErrors((prev) => (prev[field] ? { ...prev, [field]: undefined } : prev));
+  }
 
-  useEffect(() => {
-    if (!dateKey) {
-      setSlots({});
+  function validateDetails(): FieldErrors {
+    const next: FieldErrors = {};
+
+    if (!name.trim()) next.name = "Please enter your full name.";
+    else if (name.trim().length < 2) next.name = "Please enter at least 2 characters.";
+
+    if (!email.trim()) next.email = "Please enter your email address.";
+    else if (!EMAIL_PATTERN.test(email.trim())) next.email = "Please enter a valid email address.";
+
+    const phoneValue = phone.trim();
+    const phoneDigits = phoneValue.replace(/\D/g, "");
+    if (!phoneValue) next.phone = "Please enter your phone number.";
+    else if (!PHONE_PATTERN.test(phoneValue) || phoneDigits.length < 7 || phoneDigits.length > 15) {
+      next.phone = "Please enter a valid phone number (7–15 digits).";
+    }
+
+    if (requiresQueryDescription && !notes.trim()) {
+      next.notes = "Please describe what you need help with.";
+    }
+
+    return next;
+  }
+
+  function handleNextFromService() {
+    if (!service) {
+      setServiceError("Please select a service to continue.");
+      return;
+    }
+    if (!subService) {
+      setServiceError("Please select the type of assistance you need.");
+      return;
+    }
+    setServiceError("");
+    setStep(1);
+  }
+
+  function handleNextFromDetails() {
+    const nextErrors = validateDetails();
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length === 0) {
+      setStep(2);
+    }
+  }
+
+  async function handleSubmit() {
+    const nextErrors = validateDetails();
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
+      setStep(1);
       return;
     }
 
-    let cancelled = false;
-    setSlotsLoading(true);
-    fetch(`${BASE}/api/appointments/slots?date=${encodeURIComponent(dateKey)}`)
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Unable to load availability");
-        return res.json() as Promise<{ slots: Array<{ time: string; available: boolean }> }>;
-      })
-      .then((data) => {
-        if (!cancelled) {
-          setSlots(Object.fromEntries(data.slots.map((slot) => [slot.time, slot.available])));
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setSlots({});
-      })
-      .finally(() => {
-        if (!cancelled) setSlotsLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [dateKey]);
-
-  async function handleSubmit() {
     setLoading(true);
     setError("");
     try {
@@ -160,8 +155,6 @@ export default function AppointmentsPage() {
         body: JSON.stringify({
           service,
           subService,
-          appointmentDate: dateKey,
-          appointmentTime: time,
           fullName: name.trim(),
           email: email.trim(),
           phone: phone.trim(),
@@ -178,8 +171,6 @@ export default function AppointmentsPage() {
         "",
         `Service: ${SERVICES[service!].label}`,
         `Type: ${subService}`,
-        `Preferred date: ${selectedDate ? formatDateLabel(selectedDate) : dateKey}`,
-        `Preferred time: ${time}`,
         ...(data?.reference ? [`Reference: ${data.reference}`] : []),
         "",
         "My details:",
@@ -251,7 +242,7 @@ export default function AppointmentsPage() {
                   return (
                     <button
                       key={key}
-                      onClick={() => { setService(key); setSubService(""); }}
+                      onClick={() => { setService(key); setSubService(""); setServiceError(""); }}
                       className={cn(
                         "p-6 rounded-2xl border-2 text-left transition-all hover:shadow-md",
                         service === key ? `${svc.bg} ${svc.activeBorder}` : `bg-white ${svc.border} hover:${svc.bg}`
@@ -271,7 +262,7 @@ export default function AppointmentsPage() {
                     {SERVICES[service].subtypes.map((sub) => (
                       <button
                         key={sub}
-                        onClick={() => setSubService(sub)}
+                        onClick={() => { setSubService(sub); setServiceError(""); }}
                         className={cn(
                           "p-4 rounded-xl border-2 text-left text-sm font-medium transition-all",
                           subService === sub
@@ -287,162 +278,115 @@ export default function AppointmentsPage() {
                 </motion.div>
               )}
 
-              <div className="flex justify-end pt-4">
-                <Button
-                  onClick={() => setStep(1)}
-                  disabled={!canNextStep1}
-                  className="bg-primary hover:bg-primary/90 text-white px-8 h-12 disabled:opacity-40"
-                >
-                  Next: Choose Date <ChevronRight className="ml-2 w-4 h-4" />
-                </Button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Step 1: Date & Time */}
-          {step === 1 && (
-            <motion.div key="step1" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="space-y-8">
-              <div>
-                <h2 className="font-heading text-2xl font-bold text-slate-900 mb-2">Pick a date & time</h2>
-            <p className="text-slate-500">Office hours: Monday – Friday, 11:00 AM – 5:00 PM · 30-minute appointments</p>
-              </div>
-
-              <div>
-                <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-primary" /> Available Dates
-                </h3>
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-2">
-                  {dates.map((d) => {
-                    const key = formatDateKey(d);
-                    return (
-                      <button
-                        key={key}
-                        onClick={() => { setDateKey(key); setTime(""); }}
-                        className={cn(
-                          "p-3 rounded-xl border-2 text-center text-sm transition-all",
-                          dateKey === key
-                            ? "bg-primary border-primary text-white font-bold shadow-md"
-                            : "bg-white border-slate-200 text-slate-700 hover:border-primary/60"
-                        )}
-                      >
-                        <div className="font-medium">{d.toLocaleDateString("en-GB", { weekday: "short" })}</div>
-                        <div className="text-lg font-bold leading-tight">{d.getDate()}</div>
-                        <div className="text-xs opacity-80">{d.toLocaleDateString("en-GB", { month: "short" })}</div>
-                      </button>
-                    );
-                  })}
+              {serviceError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-4 text-sm">
+                  {serviceError}
                 </div>
-              </div>
-
-              {dateKey && (
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                  <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-primary" /> Available Times
-                  </h3>
-                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
-                    {slotsLoading ? (
-                      <div className="col-span-full flex items-center gap-2 text-sm text-slate-500 py-3">
-                        <Loader2 className="w-4 h-4 animate-spin" /> Checking live availability…
-                      </div>
-                    ) : TIMES.map((t) => (
-                      <button
-                        key={t}
-                        onClick={() => setTime(t)}
-                        disabled={slots[t] === false}
-                        className={cn(
-                          "py-2.5 rounded-xl border-2 text-sm font-medium transition-all",
-                          time === t
-                            ? "bg-primary border-primary text-white shadow-md"
-                            : slots[t] === false
-                              ? "bg-slate-100 border-slate-100 text-slate-400 cursor-not-allowed line-through"
-                              : "bg-white border-slate-200 text-slate-700 hover:border-primary/60"
-                        )}
-                      >
-                        {t}{slots[t] === false && <span className="block text-[10px] no-underline">Booked</span>}
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
               )}
 
-              <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={() => setStep(0)} className="px-8 h-12">Back</Button>
-                <Button onClick={() => setStep(2)} disabled={!canNextStep2} className="bg-primary hover:bg-primary/90 text-white px-8 h-12 disabled:opacity-40">
+              <div className="flex justify-end pt-4">
+                <Button
+                  onClick={handleNextFromService}
+                  className="bg-primary hover:bg-primary/90 text-white px-8 h-12"
+                >
                   Next: Your Details <ChevronRight className="ml-2 w-4 h-4" />
                 </Button>
               </div>
             </motion.div>
           )}
 
-          {/* Step 2: Personal Details */}
-          {step === 2 && (
-            <motion.div key="step2" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="space-y-8">
+          {/* Step 1: Personal Details */}
+          {step === 1 && (
+            <motion.div key="step1" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="space-y-8">
               <div>
                 <h2 className="font-heading text-2xl font-bold text-slate-900 mb-2">Your Details</h2>
-                <p className="text-slate-500">We'll use this to confirm your appointment and send you a reminder.</p>
+                <p className="text-slate-500">Tell us who you are and we'll arrange your free consultation.</p>
               </div>
+
+              {service && (
+                <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 px-5 py-4">
+                  <Check className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-primary">Selected service</p>
+                    <p className="font-semibold text-slate-900 mt-0.5">{SERVICES[service].label}</p>
+                    <p className="text-sm text-slate-600">{subService}</p>
+                  </div>
+                </div>
+              )}
 
               <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-5 shadow-sm">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">Full Name *</label>
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="appointment-name">Full Name *</label>
                   <Input
+                    id="appointment-name"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => { setName(e.target.value); clearError("name"); }}
                     placeholder="e.g. Muhammad Ali Khan"
-                    className="h-11"
+                    className={cn("h-11", errors.name && "border-red-400 focus-visible:ring-red-300")}
+                    aria-invalid={!!errors.name}
                   />
+                  {errors.name && <p className="text-xs text-red-600 mt-1.5">{errors.name}</p>}
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Email Address *</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="appointment-email">Email Address *</label>
                     <Input
+                      id="appointment-email"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => { setEmail(e.target.value); clearError("email"); }}
                       placeholder="you@example.com"
-                      className="h-11"
+                      className={cn("h-11", errors.email && "border-red-400 focus-visible:ring-red-300")}
+                      aria-invalid={!!errors.email}
                     />
+                    {errors.email && <p className="text-xs text-red-600 mt-1.5">{errors.email}</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">Phone Number *</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="appointment-phone">Phone Number *</label>
                     <Input
+                      id="appointment-phone"
                       type="tel"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => { setPhone(e.target.value); clearError("phone"); }}
                       placeholder="07xxx xxxxxx"
-                      className="h-11"
+                      className={cn("h-11", errors.phone && "border-red-400 focus-visible:ring-red-300")}
+                      aria-invalid={!!errors.phone}
                     />
+                    {errors.phone && <p className="text-xs text-red-600 mt-1.5">{errors.phone}</p>}
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="appointment-notes">
                     {requiresQueryDescription ? "What do you need help with? *" : "Additional Notes (optional)"}
                   </label>
                   <Textarea
+                    id="appointment-notes"
                     value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
+                    onChange={(e) => { setNotes(e.target.value); clearError("notes"); }}
                     placeholder={requiresQueryDescription ? "Briefly describe your query..." : "Any additional context or questions for us..."}
-                    className="min-h-[80px] max-h-28"
-                    required={requiresQueryDescription}
+                    className={cn("min-h-[80px] max-h-28", errors.notes && "border-red-400 focus-visible:ring-red-300")}
+                    aria-invalid={!!errors.notes}
                   />
-                  {requiresQueryDescription && (
+                  {errors.notes ? (
+                    <p className="text-xs text-red-600 mt-1.5">{errors.notes}</p>
+                  ) : requiresQueryDescription ? (
                     <p className="text-xs text-slate-500 mt-1.5">Please describe what you need help with so we can prepare for your appointment.</p>
-                  )}
+                  ) : null}
                 </div>
               </div>
 
               <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={() => setStep(1)} className="px-8 h-12">Back</Button>
-                <Button onClick={() => setStep(3)} disabled={!canNextStep3} className="bg-primary hover:bg-primary/90 text-white px-8 h-12 disabled:opacity-40">
+                <Button variant="outline" onClick={() => setStep(0)} className="px-8 h-12">Back</Button>
+                <Button onClick={handleNextFromDetails} className="bg-primary hover:bg-primary/90 text-white px-8 h-12">
                   Review Booking <ChevronRight className="ml-2 w-4 h-4" />
                 </Button>
               </div>
             </motion.div>
           )}
 
-          {/* Step 3: Confirm */}
-          {step === 3 && (
-            <motion.div key="step3" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="space-y-8">
+          {/* Step 2: Review & Confirm */}
+          {step === 2 && service && (
+            <motion.div key="step2" initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} className="space-y-8">
               <div>
                 <h2 className="font-heading text-2xl font-bold text-slate-900 mb-2">Confirm your Appointment</h2>
                 <p className="text-slate-500">Please review the details below, then send your request on WhatsApp — your appointment details will be ready to send.</p>
@@ -453,10 +397,8 @@ export default function AppointmentsPage() {
                   <span className="text-xs font-semibold uppercase tracking-widest text-primary">Appointment Summary</span>
                 </div>
                 <div className="p-8 grid sm:grid-cols-2 gap-x-8 gap-y-5">
-                  <SummaryItem icon={<FileText className="w-4 h-4" />} label="Service" value={SERVICES[service!].label} />
+                  <SummaryItem icon={<FileText className="w-4 h-4" />} label="Service" value={SERVICES[service].label} />
                   <SummaryItem icon={<FileText className="w-4 h-4" />} label="Type" value={subService} />
-                  <SummaryItem icon={<Calendar className="w-4 h-4" />} label="Date" value={selectedDate ? formatDateLabel(selectedDate) : dateKey} />
-                  <SummaryItem icon={<Clock className="w-4 h-4" />} label="Time" value={time} />
                   <SummaryItem icon={<User className="w-4 h-4" />} label="Name" value={name} />
                   <SummaryItem icon={<User className="w-4 h-4" />} label="Email" value={email} />
                   <SummaryItem icon={<User className="w-4 h-4" />} label="Phone" value={phone} />
@@ -483,7 +425,7 @@ export default function AppointmentsPage() {
               )}
 
               <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={() => setStep(2)} className="px-8 h-12" disabled={loading}>Back</Button>
+                <Button variant="outline" onClick={() => setStep(1)} className="px-8 h-12" disabled={loading}>Back</Button>
                 <Button
                   onClick={handleSubmit}
                   disabled={loading}
