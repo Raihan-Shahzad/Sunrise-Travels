@@ -21,7 +21,7 @@ const posts = [
     excerpt: "NADRA has recently updated some procedures for Overseas Pakistanis. Read our guide on what documents are currently required for a smooth renewal process.",
     date: "April 28, 2024",
     category: "NADRA Assistance",
-    image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1000&auto=format&fit=crop",
+    image: `${ASSET_BASE}images/pakistan-flag.jpg`,
   },
   {
     id: 3,

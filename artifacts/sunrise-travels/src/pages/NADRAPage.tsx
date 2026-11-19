@@ -2,6 +2,8 @@ import { AlertTriangle, CheckCircle2, FileText, Users, Phone, MessageCircle } fr
 import { PHONE, PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
 import PageHero from "@/components/PageHero";
 
+const ASSET_BASE = import.meta.env.BASE_URL;
+
 const services = [
   {
     title: "NICOP Applications",
@@ -36,7 +38,7 @@ export default function NADRAPage() {
         eyebrow="NADRA Assistance"
         title="NADRA Application Assistance"
         subtitle="Skip the confusion and hassle. We provide expert guidance and document preparation assistance for all your NADRA needs."
-        image="https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=2000&auto=format&fit=crop"
+        image={`${ASSET_BASE}images/pakistan-flag.jpg`}
       />
 
       <section className="py-16 container mx-auto px-4">

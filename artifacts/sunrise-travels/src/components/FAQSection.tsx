@@ -17,8 +17,8 @@ const faqs = [
     answer: "Processing times vary depending on the service tier chosen. Fast-track applications can take 7-10 working days, while standard processing usually takes 3-4 weeks. We ensure your application is submitted correctly to avoid unnecessary delays."
   },
   {
-    question: "Can you help me if I've lost my Pakistani passport?",
-    answer: "Yes, we provide full assistance for lost, damaged, or expired Pakistani passports. We guide you through the required documentation, help fill out the forms, and assist with booking your appointment at the consulate."
+    question: "Can you help me if I've lost my passport?",
+    answer: "Yes, we provide full assistance for lost, damaged, or expired passports. We guide you through the required documentation, help fill out the forms, and assist with booking your appointment at the consulate."
   },
 ];
 
