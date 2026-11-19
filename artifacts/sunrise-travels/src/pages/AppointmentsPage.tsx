@@ -15,8 +15,9 @@ function getInitialState() {
   const svc = params.get("service") as Service | null;
   const sub = params.get("sub") ?? "";
   const validService = svc && ["nadra", "visa", "passport"].includes(svc) ? svc : null;
-  const initialStep = validService && sub ? 1 : 0;
-  return { service: validService, subService: sub, step: initialStep };
+  const validSubService = validService && SERVICES[validService].subtypes.includes(sub) ? sub : "";
+  const initialStep = validService && validSubService ? 1 : 0;
+  return { service: validService, subService: validSubService, step: initialStep };
 }
 
 const SERVICES = {
@@ -29,9 +30,7 @@ const SERVICES = {
     subtypes: [
         "New NICOP / NICOP Renewal",
         "Lost / Damaged NICOP Replacement",
-        "FRC Certificate",
-        "POC Card",
-        "Other NADRA Query",
+        "Other NADRA Query (FRC certificate, POC card etc.)",
     ],
   },
   visa: {

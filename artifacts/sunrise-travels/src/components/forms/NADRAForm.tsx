@@ -11,9 +11,7 @@ export default function NADRAForm() {
           <option value="">Select Service Type</option>
           <option value="nicop-new">New NICOP</option>
           <option value="nicop-renewal">NICOP Renewal</option>
-          <option value="poc">POC</option>
-          <option value="frc">Family Registration Certificate (FRC)</option>
-          <option value="other">Other Query</option>
+          <option value="other">Other NADRA Query (FRC certificate, POC card etc.)</option>
         </select>
         <Input placeholder="Full Name" />
         <Input type="email" placeholder="Email Address" />
