@@ -36,10 +36,10 @@ const features = [
     image: `${ASSET_BASE}images/pakistan-flag.jpg`,
   },
   {
-    title: "Pakistani Visa Assistance",
+    title: "Visa Assistance",
     icon: FileText,
-    description: "New visas, renewals, extensions, and other Pakistani visa queries.",
-    link: "/pakistani-visa-assistance",
+    description: "New visas, renewals, extensions, and other visa queries.",
+    link: "/visa-assistance",
     image: `${ASSET_BASE}images/passport-visa.jpg`,
   },
   {

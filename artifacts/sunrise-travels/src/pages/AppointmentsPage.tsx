@@ -42,7 +42,7 @@ const SERVICES = {
     ],
   },
   visa: {
-      label: "Pakistani Visa Assistance",
+      label: "Visa Assistance",
     color: "text-emerald-600",
     bg: "bg-emerald-50",
     border: "border-emerald-200",
@@ -171,7 +171,7 @@ export default function AppointmentsPage() {
       <PageHero
         eyebrow="Free consultation"
         title="Book an Appointment"
-        subtitle="Schedule a free consultation at our Luton office for NADRA, Pakistani Visa, or Passport assistance."
+        subtitle="Schedule a free consultation at our Luton office for NADRA, Visa, or Passport assistance."
         image="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2000&auto=format&fit=crop"
         size="compact"
       />

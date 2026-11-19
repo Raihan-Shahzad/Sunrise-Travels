@@ -37,9 +37,9 @@ export default function VisaPage() {
 
       <PageHero
         eyebrow="Visa Services"
-        title="Pakistani Visa Assistance"
+        title="Visa Assistance"
         subtitle="Navigate the visa application process with confidence. We offer document review and expert consultation for all visa types."
-        image={`${ASSET_BASE}images/destinations/islamabad.jpg`}
+        image={`${ASSET_BASE}images/passport-visa.jpg`}
       />
 
       <section className="py-16 container mx-auto px-4">
