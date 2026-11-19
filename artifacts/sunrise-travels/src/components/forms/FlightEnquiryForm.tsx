@@ -44,14 +44,36 @@ function localDateKey(date = new Date()) {
 function isValidDateKey(value: string) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
   if (!match) return false;
-  const [, year, month, day] = match.map(Number);
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
   const date = new Date(year, month - 1, day);
   return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
 }
 
 function isValidEmail(email: string) {
   const value = email.trim();
-  return value.length <= 254 && /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/.test(value);
+  const at = value.lastIndexOf("@");
+  if (value.length > 254 || at <= 0 || at === value.length - 1 || value.indexOf("@") !== at) return false;
+  const local = value.slice(0, at);
+  const domain = value.slice(at + 1);
+  const labels = domain.split(".");
+  return local.length <= 64
+    && /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+$/.test(local)
+    && !local.startsWith(".")
+    && !local.endsWith(".")
+    && !local.includes("..")
+    && labels.length >= 2
+    && labels.every((label) =>
+      label.length > 0
+      && label.length <= 63
+      && /^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/.test(label)
+    )
+    && /^[A-Za-z]{2,63}$/.test(labels[labels.length - 1]);
+}
+
+function hasValidTextContent(value: string) {
+  return /[\p{L}\p{N}]/u.test(value);
 }
 
 function validate(
@@ -71,8 +93,10 @@ function validate(
       const to = leg.to.trim();
       if (!from) legErrors.from = "Departure city or airport required";
       else if (from.length < 2 || from.length > 100) legErrors.from = "Enter 2–100 characters";
+      else if (!hasValidTextContent(from)) legErrors.from = "Enter a city or airport";
       if (!to) legErrors.to = "Destination required";
       else if (to.length < 2 || to.length > 100) legErrors.to = "Enter 2–100 characters";
+      else if (!hasValidTextContent(to)) legErrors.to = "Enter a city or airport";
       else if (from && from.localeCompare(to, undefined, { sensitivity: "base" }) === 0) {
         legErrors.to = "Choose a destination different from departure";
       }
@@ -97,8 +121,10 @@ function validate(
     const to = fields.to.trim();
     if (!from) e.from = "Departure city or airport required";
     else if (from.length < 2 || from.length > 100) e.from = "Enter 2–100 characters";
+    else if (!hasValidTextContent(from)) e.from = "Enter a city or airport";
     if (!to) e.to = "Destination required";
     else if (to.length < 2 || to.length > 100) e.to = "Enter 2–100 characters";
+    else if (!hasValidTextContent(to)) e.to = "Enter a city or airport";
     else if (from && from.localeCompare(to, undefined, { sensitivity: "base" }) === 0) {
       e.to = "Choose a destination different from departure";
     }
@@ -123,6 +149,7 @@ function validate(
   if (!fields.name.trim()) e.name = "Full name required";
   else if (fields.name.trim().length < 2) e.name = "Enter at least 2 characters";
   else if (fields.name.trim().length > 100) e.name = "Name must be 100 characters or fewer";
+  else if (!hasValidTextContent(fields.name.trim())) e.name = "Enter a valid name";
   if (!fields.email.trim()) e.email = "Email required";
   else if (!isValidEmail(fields.email)) e.email = "Enter a valid email address";
   if (!fields.phone.trim()) e.phone = "Phone required";
@@ -255,8 +282,8 @@ function DateField({ id, label, value, min, error, onChange, onBlur, placeholder
         onClick={() => setOpen((current) => !current)}
         aria-expanded={open}
         aria-haspopup="dialog"
-          aria-required="true"
-          aria-invalid={!!error}
+        aria-required="true"
+        aria-invalid={!!error}
         className={cn(
           "relative w-full flex items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition-all",
           error
@@ -731,7 +758,7 @@ export default function FlightEnquiryForm() {
                 aria-required="true"
                 aria-invalid={touched.has("phone") && !!errors.phone}
                 maxLength={30}
-                placeholder="7700 900123"
+                placeholder="Number"
                 value={fields.phone}
                 onChange={(event) => setField("phone", event.target.value)}
                 onBlur={() => touchField("phone")}
