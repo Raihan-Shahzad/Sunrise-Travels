@@ -1,36 +1,9 @@
-import {
-  getCountries,
-  getCountryCallingCode,
-  isValidPhoneNumber,
-  parsePhoneNumber,
-  type CountryCode,
-} from "libphonenumber-js";
+import { isValidPhoneNumber, parsePhoneNumber, type CountryCode } from "libphonenumber-js";
 import { cn } from "@/lib/utils";
+import { CountryCodeDropdown } from "@/components/forms/CountryCodeDropdown";
+import { DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES } from "@/components/forms/phoneCountries";
 
-const REGION_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
-
-function regionName(country: CountryCode) {
-  try {
-    return REGION_NAMES.of(country) ?? country;
-  } catch {
-    return country;
-  }
-}
-
-function flagEmoji(country: CountryCode) {
-  return String.fromCodePoint(...[...country].map((c) => 127397 + c.charCodeAt(0)));
-}
-
-export const PHONE_COUNTRIES = getCountries()
-  .map((country) => ({
-    country,
-    name: regionName(country),
-    callingCode: getCountryCallingCode(country),
-    flag: flagEmoji(country),
-  }))
-  .sort((a, b) => a.name.localeCompare(b.name));
-
-export const DEFAULT_PHONE_COUNTRY: CountryCode = "GB";
+export { DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES };
 
 export function isValidPhone(value: string, country: CountryCode) {
   const trimmed = value.trim();
@@ -80,8 +53,6 @@ export function CountryPhoneInput({
   className,
   autoComplete = "tel-national",
 }: CountryPhoneInputProps) {
-  const selected = PHONE_COUNTRIES.find((c) => c.country === country) ?? PHONE_COUNTRIES[0];
-
   return (
     <div
       className={cn(
@@ -94,27 +65,8 @@ export function CountryPhoneInput({
         <Icon className={cn("h-4 w-4 shrink-0", error ? "text-red-400" : "text-slate-400")} aria-hidden="true" />
       )}
 
-      <div className="relative shrink-0">
-        <select
-          id={id ? `${id}-country` : undefined}
-          aria-label="Country calling code"
-          value={country}
-          onChange={(event) => onCountryChange(event.target.value as CountryCode)}
-          className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-        >
-          {PHONE_COUNTRIES.map((c) => (
-            <option key={c.country} value={c.country}>
-              {c.flag} {c.name} (+{c.callingCode})
-            </option>
-          ))}
-        </select>
-        <span
-          aria-hidden="true"
-          className="flex items-center gap-1 pr-1.5 text-sm font-medium text-slate-700"
-        >
-          <span>{selected.flag}</span>
-          <span>+{selected.callingCode}</span>
-        </span>
+      <div className="shrink-0">
+        <CountryCodeDropdown id={id} country={country} onChange={onCountryChange} />
       </div>
 
       <span className="h-5 w-px shrink-0 bg-slate-200" aria-hidden="true" />
