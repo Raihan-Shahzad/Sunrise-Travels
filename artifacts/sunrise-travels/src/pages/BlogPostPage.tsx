@@ -5,7 +5,7 @@ const ASSET_BASE = import.meta.env.BASE_URL;
 
 const covers: Record<string, string> = {
   "essential-hajj-packing-list-2024": `${ASSET_BASE}images/makkah-kaaba.jpg`,
-  "latest-nicop-renewal-guidelines": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1600&auto=format&fit=crop",
+  "latest-nicop-renewal-guidelines": `${ASSET_BASE}images/pakistan-flag.jpg`,
   "top-5-family-destinations-pakistan": `${ASSET_BASE}images/destinations/pakistan.jpg`,
   "understanding-umrah-evisa": `${ASSET_BASE}images/madinah-masjid-nabawi.jpg`,
 };

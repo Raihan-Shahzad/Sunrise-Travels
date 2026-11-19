@@ -4,9 +4,15 @@ import {
   User, Mail, Phone, ArrowRight, AlertCircle, Loader2, ChevronDown,
   Plus, Minus, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
-import { getCountries, getCountryCallingCode, isValidPhoneNumber, parsePhoneNumber, type CountryCode } from "libphonenumber-js";
+import { type CountryCode } from "libphonenumber-js";
 import { cn } from "@/lib/utils";
 import { WHATSAPP_NUMBER } from "@/lib/site-config";
+import {
+  CountryPhoneInput,
+  DEFAULT_PHONE_COUNTRY,
+  formatPhone,
+  isValidPhone,
+} from "@/components/forms/CountryPhoneInput";
 
 type TripType = "return" | "oneway" | "multicity";
 type FormState = "idle" | "loading";
@@ -27,15 +33,6 @@ const EMPTY_MULTI_CITY: MultiCityLeg[] = [
   { from: "", to: "", date: "" },
   { from: "", to: "", date: "" },
 ];
-
-const REGION_NAMES = new Intl.DisplayNames(["en"], { type: "region" });
-const PHONE_COUNTRIES = getCountries()
-  .map((country) => ({
-    country,
-    name: REGION_NAMES.of(country) ?? country,
-    callingCode: getCountryCallingCode(country),
-  }))
-  .sort((a, b) => a.name.localeCompare(b.name));
 
 function localDateKey(date = new Date()) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
@@ -126,7 +123,7 @@ function validate(
   if (!fields.email.trim()) e.email = "Email required";
   else if (!isValidEmail(fields.email)) e.email = "Enter a valid email address";
   if (!fields.phone.trim()) e.phone = "Phone required";
-  else if (!isValidPhoneNumber(fields.phone.trim(), phoneCountry)) {
+  else if (!isValidPhone(fields.phone, phoneCountry)) {
     e.phone = "Enter a valid phone number for the selected country";
   }
   return e;
@@ -479,7 +476,7 @@ function PassengerPicker({ id, pax, onChange, error }: {
 export default function FlightEnquiryForm() {
   const [tripType, setTripType] = useState<TripType>("return");
   const [fields, setFields] = useState<Fields>(EMPTY_FIELDS);
-  const [phoneCountry, setPhoneCountry] = useState<CountryCode>("GB");
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>(DEFAULT_PHONE_COUNTRY);
   const [pax, setPax] = useState<Pax>(EMPTY_PAX);
   const [multiCityLegs, setMultiCityLegs] = useState<MultiCityLeg[]>(EMPTY_MULTI_CITY);
   const [errors, setErrors] = useState<Errors>({});
@@ -536,7 +533,7 @@ export default function FlightEnquiryForm() {
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
     setFormState("loading");
-    const phoneNumber = parsePhoneNumber(fields.phone.trim(), phoneCountry);
+    const phoneNumber = formatPhone(fields.phone, phoneCountry);
     if (!phoneNumber) {
       setFormState("idle");
       setErrors({ ...errs, phone: "Enter a valid phone number for the selected country" });
@@ -555,7 +552,7 @@ export default function FlightEnquiryForm() {
       "My details:",
       `Name: ${fields.name}`,
       `Email: ${fields.email}`,
-      `Phone: ${phoneNumber.formatInternational()}`,
+      `Phone: ${phoneNumber}`,
       "",
       "Please share your best available fare. Thank you.",
     ].join("\n");
@@ -703,41 +700,18 @@ export default function FlightEnquiryForm() {
           </div>
           <div>
             <FieldLabel required htmlFor="flight-phone-number">Phone</FieldLabel>
-            <div className={cn(
-              "flex min-w-0 items-center gap-2.5 rounded-xl border bg-slate-50 px-3.5 py-3 transition-colors focus-within:border-primary focus-within:bg-white",
-              touched.has("phone") && errors.phone ? "border-red-400" : "border-slate-200"
-            )}>
-              <Phone className={cn("h-4 w-4 shrink-0", touched.has("phone") && errors.phone ? "text-red-400" : "text-slate-400")} />
-              <label htmlFor="flight-phone-country" className="sr-only">Phone country calling code</label>
-              <select
-                id="flight-phone-country"
-                value={phoneCountry}
-                onChange={(event) => handlePhoneCountryChange(event.target.value as CountryCode)}
-                aria-label="Phone country calling code"
-                aria-required="true"
-                aria-invalid={touched.has("phone") && !!errors.phone}
-                className="w-[58%] min-w-0 shrink-0 border-r border-slate-200 bg-transparent pr-2 text-xs text-slate-700 outline-none"
-              >
-                {PHONE_COUNTRIES.map(({ country, name, callingCode }) => (
-                  <option key={country} value={country}>{name} (+{callingCode})</option>
-                ))}
-              </select>
-              <input
-                id="flight-phone-number"
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel-national"
-                required
-                aria-required="true"
-                aria-invalid={touched.has("phone") && !!errors.phone}
-                maxLength={30}
-                placeholder="7700 900123"
-                value={fields.phone}
-                onChange={(event) => setField("phone", event.target.value)}
-                onBlur={() => touchField("phone")}
-                className="min-w-0 flex-1 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 outline-none"
-              />
-            </div>
+            <CountryPhoneInput
+              id="flight-phone-number"
+              icon={Phone}
+              country={phoneCountry}
+              onCountryChange={handlePhoneCountryChange}
+              value={fields.phone}
+              onValueChange={(value) => setField("phone", value)}
+              onBlur={() => touchField("phone")}
+              error={touched.has("phone") ? errors.phone : undefined}
+              placeholder="7700 900123"
+              className="h-auto min-w-0 px-3.5 py-3"
+            />
             <FieldError msg={touched.has("phone") ? errors.phone : undefined} />
           </div>
         </div>

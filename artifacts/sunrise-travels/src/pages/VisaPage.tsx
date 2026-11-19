@@ -2,6 +2,8 @@ import { AlertTriangle, CheckCircle2, Globe, FileCheck, Briefcase, Phone, Messag
 import { PHONE, PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
 import PageHero from "@/components/PageHero";
 
+const ASSET_BASE = import.meta.env.BASE_URL;
+
 const services = [
   {
     title: "Tourist Visas",
@@ -37,7 +39,7 @@ export default function VisaPage() {
         eyebrow="Visa Services"
         title="Pakistani Visa Assistance"
         subtitle="Navigate the visa application process with confidence. We offer document review and expert consultation for all visa types."
-        image="https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=2000&auto=format&fit=crop"
+        image={`${ASSET_BASE}images/destinations/islamabad.jpg`}
       />
 
       <section className="py-16 container mx-auto px-4">

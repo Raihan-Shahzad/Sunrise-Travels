@@ -63,7 +63,7 @@ const sites = [
   { name: "Masjid al-Haram", location: "Makkah", image: `${ASSET_BASE}images/makkah-kaaba.jpg` },
   { name: "Masjid Nabawi", location: "Madinah", image: `${ASSET_BASE}images/madinah-masjid-nabawi.jpg` },
   { name: "Mount Arafat", location: "Makkah", image: `${ASSET_BASE}images/mount-arafat.jpg` },
-  { name: "Masjid Quba", location: "Madinah", image: "https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=800&auto=format&fit=crop" },
+  { name: "Masjid Quba", location: "Madinah", image: `${ASSET_BASE}images/masjid-quba.jpg` },
 ];
 
 export default function HajjUmrahPage() {

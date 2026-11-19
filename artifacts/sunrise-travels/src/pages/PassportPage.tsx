@@ -2,6 +2,8 @@ import { AlertTriangle, CheckCircle2, Ticket, Phone, MessageCircle } from "lucid
 import { PHONE, PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
 import PageHero from "@/components/PageHero";
 
+const ASSET_BASE = import.meta.env.BASE_URL;
+
 const steps = [
   { num: 1, title: "Document Review", desc: "We check your existing documents (CNIC, old passport, etc.) to ensure they meet consulate requirements before your visit." },
   { num: 2, title: "Application Guidance", desc: "We walk you through completing the necessary forms accurately to avoid rejections or delays." },
@@ -24,7 +26,7 @@ export default function PassportPage() {
         eyebrow="Passport Services"
         title="Passport Assistance"
         subtitle="Expert guidance for passport applications, renewals, and replacements."
-        image="https://images.unsplash.com/photo-1569154941061-e231b4725ef1?q=80&w=2000&auto=format&fit=crop"
+        image={`${ASSET_BASE}images/passport.jpg`}
       />
 
       <section className="py-16 container mx-auto px-4">

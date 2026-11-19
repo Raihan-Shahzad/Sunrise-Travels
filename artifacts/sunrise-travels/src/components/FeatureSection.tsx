@@ -33,21 +33,21 @@ const features = [
     icon: FileCheck,
     description: "New or renewed NICOPs, lost or damaged replacements, and other queries.",
     link: "/nadra-assistance",
-    image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=900&auto=format&fit=crop",
+    image: `${ASSET_BASE}images/pakistan-flag.jpg`,
   },
   {
     title: "Pakistani Visa Assistance",
     icon: FileText,
     description: "New visas, renewals, extensions, and other Pakistani visa queries.",
     link: "/pakistani-visa-assistance",
-    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=900&auto=format&fit=crop",
+    image: `${ASSET_BASE}images/passport-visa.jpg`,
   },
   {
     title: "Passport Assistance",
     icon: Ticket,
     description: "New passports, renewals, lost or damaged replacements, and other queries.",
     link: "/passport-assistance",
-    image: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?q=80&w=900&auto=format&fit=crop",
+    image: `${ASSET_BASE}images/passport.jpg`,
   },
 ];
 
