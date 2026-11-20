@@ -6,6 +6,8 @@
   } from "lucide-react";
   import { type CountryCode } from "libphonenumber-js";
   import { cn } from "@/lib/utils";
+  import { isAirportLabel } from "@/lib/airports";
+  import AirportCombobox from "@/components/forms/AirportCombobox";
   import { WHATSAPP_NUMBER } from "@/lib/site-config";
   import {
     CountryPhoneInput,
@@ -66,10 +68,10 @@
         const legErrors: Partial<Record<keyof MultiCityLeg, string>> = {};
         const from = leg.from.trim();
         const to = leg.to.trim();
-        if (!from) legErrors.from = "Departure city or airport required";
-        else if (from.length < 2 || from.length > 100) legErrors.from = "Enter 2–100 characters";
-        if (!to) legErrors.to = "Destination required";
-        else if (to.length < 2 || to.length > 100) legErrors.to = "Enter 2–100 characters";
+        if (!from) legErrors.from = "Select a departure airport from the list";
+        else if (!isAirportLabel(from)) legErrors.from = "Select an airport from the list";
+        if (!to) legErrors.to = "Select a destination airport from the list";
+        else if (!isAirportLabel(to)) legErrors.to = "Select an airport from the list";
         else if (from && from.localeCompare(to, undefined, { sensitivity: "base" }) === 0) {
           legErrors.to = "Choose a destination different from departure";
         }
@@ -92,10 +94,10 @@
     } else {
       const from = fields.from.trim();
       const to = fields.to.trim();
-      if (!from) e.from = "Departure city or airport required";
-      else if (from.length < 2 || from.length > 100) e.from = "Enter 2–100 characters";
-      if (!to) e.to = "Destination required";
-      else if (to.length < 2 || to.length > 100) e.to = "Enter 2–100 characters";
+      if (!from) e.from = "Select a departure airport from the list";
+      else if (!isAirportLabel(from)) e.from = "Select an airport from the list";
+      if (!to) e.to = "Select a destination airport from the list";
+      else if (!isAirportLabel(to)) e.to = "Select an airport from the list";
       else if (from && from.localeCompare(to, undefined, { sensitivity: "base" }) === 0) {
         e.to = "Choose a destination different from departure";
       }
@@ -604,11 +606,11 @@
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <FieldLabel required htmlFor={`multi-city-${index}-from`}>From</FieldLabel>
-                        <Field id={`multi-city-${index}-from`} icon={PlaneTakeoff} placeholder="e.g. London LHR" value={leg.from} onChange={(v) => updateMultiCityLeg(index, "from", v)} error={legErrors?.from} required maxLength={100} />
+                        <AirportCombobox id={`multi-city-${index}-from`} icon={PlaneTakeoff} placeholder="Search airport or code" value={leg.from} onChange={(v) => updateMultiCityLeg(index, "from", v)} error={legErrors?.from} required />
                       </div>
                       <div>
                         <FieldLabel required htmlFor={`multi-city-${index}-to`}>To</FieldLabel>
-                        <Field id={`multi-city-${index}-to`} icon={PlaneLanding} placeholder="e.g. Islamabad ISB" value={leg.to} onChange={(v) => updateMultiCityLeg(index, "to", v)} error={legErrors?.to} required maxLength={100} />
+                        <AirportCombobox id={`multi-city-${index}-to`} icon={PlaneLanding} placeholder="Search airport or code" value={leg.to} onChange={(v) => updateMultiCityLeg(index, "to", v)} error={legErrors?.to} required align="right" />
                       </div>
                     </div>
                     <div className="mt-3">
@@ -636,11 +638,11 @@
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <FieldLabel required htmlFor="flight-from">From</FieldLabel>
-                  <Field id="flight-from" icon={PlaneTakeoff} placeholder="e.g. London LHR" value={fields.from} onChange={(v) => setField("from", v)} onBlur={() => touchField("from")} error={touched.has("from") ? errors.from : undefined} required maxLength={100} />
+                  <AirportCombobox id="flight-from" icon={PlaneTakeoff} placeholder="Search airport or code" value={fields.from} onChange={(v) => setField("from", v)} onBlur={() => touchField("from")} error={touched.has("from") ? errors.from : undefined} required />
                 </div>
                 <div>
                   <FieldLabel required htmlFor="flight-to">To</FieldLabel>
-                  <Field id="flight-to" icon={PlaneLanding} placeholder="e.g. Islamabad ISB" value={fields.to} onChange={(v) => setField("to", v)} onBlur={() => touchField("to")} error={touched.has("to") ? errors.to : undefined} required maxLength={100} />
+                  <AirportCombobox id="flight-to" icon={PlaneLanding} placeholder="Search airport or code" value={fields.to} onChange={(v) => setField("to", v)} onBlur={() => touchField("to")} error={touched.has("to") ? errors.to : undefined} required align="right" />
                 </div>
               </div>
 
