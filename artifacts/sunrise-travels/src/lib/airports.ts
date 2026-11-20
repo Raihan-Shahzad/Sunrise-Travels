@@ -8,6 +8,19 @@ export interface Airport {
   country: string;
 }
 
+/**
+ * Airports offered in the flight search.
+ *
+ * Countries on the UK Air Safety List whose airlines are all banned from
+ * operating to, from or within the UK are deliberately left out — Afghanistan,
+ * Armenia, Congo (Brazzaville), DR Congo, Djibouti, Equatorial Guinea, Eritrea,
+ * Kyrgyzstan, Liberia, Libya, Nepal, Russia, São Tomé and Príncipe, Sierra Leone
+ * and Sudan. Do not add their airports back.
+ * Source: https://www.gov.uk/guidance/uk-air-safety-list (checked 20 Nov 2025).
+ *
+ * Iran and Iraq remain listed: the UK list names only some of their airlines
+ * (Iran Air and Iraqi Airways are permitted), not the countries as a whole.
+ */
 export const AIRPORTS: Airport[] = [
   // United Kingdom & Ireland
   { code: "LHR", city: "London", name: "Heathrow Airport", country: "United Kingdom" },
@@ -64,8 +77,6 @@ export const AIRPORTS: Airport[] = [
   { code: "CGP", city: "Chattogram", name: "Shah Amanat International Airport", country: "Bangladesh" },
   { code: "ZYL", city: "Sylhet", name: "Osmani International Airport", country: "Bangladesh" },
   { code: "CMB", city: "Colombo", name: "Bandaranaike International Airport", country: "Sri Lanka" },
-  { code: "KTM", city: "Kathmandu", name: "Tribhuvan International Airport", country: "Nepal" },
-  { code: "KBL", city: "Kabul", name: "Hamid Karzai International Airport", country: "Afghanistan" },
 
   // Middle East
   { code: "DXB", city: "Dubai", name: "Dubai International Airport", country: "United Arab Emirates" },
