@@ -16,7 +16,7 @@ import { useColors } from "@/hooks/useColors";
 
 const PHONE = "01582 732007";
 const PHONE_INTL = "+441582732007";
-const WHATSAPP = "441582732007";
+const WHATSAPP = "447777786396";
 const MAKKAH_IMAGE = require("../../assets/makkah-kaaba.jpg");
 
 const SERVICES = [

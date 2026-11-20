@@ -60,7 +60,7 @@ const TIMES = [
   "05:00 PM",
 ];
 
-const WHATSAPP_NUMBER = "441582732007";
+const WHATSAPP_NUMBER = "447777786396";
 
 function getAvailableDates(count = 14): Date[] {
   const dates: Date[] = [];
