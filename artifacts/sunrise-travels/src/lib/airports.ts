@@ -18,8 +18,8 @@ export interface Airport {
  * and Sudan. Do not add their airports back.
  * Source: https://www.gov.uk/guidance/uk-air-safety-list (checked 20 Nov 2025).
  *
- * Iran and Iraq remain listed: the UK list names only some of their airlines
- * (Iran Air and Iraqi Airways are permitted), not the countries as a whole.
+ * Iran and Iraq are also left out: the UK list bans Iranian airlines other than
+ * Iran Air, and bans Iraqi Airways, so neither country is offered here.
  */
 export const AIRPORTS: Airport[] = [
   // United Kingdom & Ireland
@@ -92,16 +92,12 @@ export const AIRPORTS: Airport[] = [
   { code: "MCT", city: "Muscat", name: "Muscat International Airport", country: "Oman" },
   { code: "AMM", city: "Amman", name: "Queen Alia International Airport", country: "Jordan" },
   { code: "BEY", city: "Beirut", name: "Rafic Hariri International Airport", country: "Lebanon" },
-  { code: "BGW", city: "Baghdad", name: "Baghdad International Airport", country: "Iraq" },
-  { code: "EBL", city: "Erbil", name: "Erbil International Airport", country: "Iraq" },
-  { code: "NJF", city: "Najaf", name: "Al Najaf International Airport", country: "Iraq" },
   { code: "IST", city: "Istanbul", name: "Istanbul Airport", country: "Turkey" },
   { code: "SAW", city: "Istanbul", name: "Sabiha Gokcen Airport", country: "Turkey" },
   { code: "ADB", city: "Izmir", name: "Adnan Menderes Airport", country: "Turkey" },
   { code: "AYT", city: "Antalya", name: "Antalya Airport", country: "Turkey" },
   { code: "ESB", city: "Ankara", name: "Esenboga Airport", country: "Turkey" },
   { code: "TLV", city: "Tel Aviv", name: "Ben Gurion Airport", country: "Israel" },
-  { code: "IKA", city: "Tehran", name: "Imam Khomeini International Airport", country: "Iran" },
 
   // Europe
   { code: "CDG", city: "Paris", name: "Charles de Gaulle Airport", country: "France" },
