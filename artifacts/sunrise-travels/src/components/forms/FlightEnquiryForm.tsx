@@ -13,7 +13,7 @@
     CountryPhoneInput,
     DEFAULT_PHONE_COUNTRY,
     formatPhone,
-    isValidPhone,
+    isPhoneNumberPossible,
   } from "@/components/forms/CountryPhoneInput";
 
   type TripType = "return" | "oneway" | "multicity";
@@ -125,8 +125,8 @@
     if (!fields.email.trim()) e.email = "Email required";
     else if (!isValidEmail(fields.email)) e.email = "Enter a valid email address";
     if (!fields.phone.trim()) e.phone = "Phone required";
-    else if (!isValidPhone(fields.phone, phoneCountry)) {
-      e.phone = "Enter a valid phone number for the selected country";
+    else if (!isPhoneNumberPossible(fields.phone, phoneCountry)) {
+      e.phone = "Enter a phone number with a valid length for the selected country";
     }
     return e;
   }
@@ -538,7 +538,7 @@
       const phoneNumber = formatPhone(fields.phone, phoneCountry);
       if (!phoneNumber) {
         setFormState("idle");
-        setErrors({ ...errs, phone: "Enter a valid phone number for the selected country" });
+        setErrors({ ...errs, phone: "Enter a phone number with a valid length for the selected country" });
         return;
       }
       const itinerary = tripType === "multicity"

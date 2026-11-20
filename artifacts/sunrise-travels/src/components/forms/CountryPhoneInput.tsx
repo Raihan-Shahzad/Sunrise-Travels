@@ -1,15 +1,15 @@
-import { isValidPhoneNumber, parsePhoneNumber, type CountryCode } from "libphonenumber-js";
+import { isPossiblePhoneNumber, parsePhoneNumber, type CountryCode } from "libphonenumber-js";
 import { cn } from "@/lib/utils";
 import { CountryCodeDropdown } from "@/components/forms/CountryCodeDropdown";
 import { DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES } from "@/components/forms/phoneCountries";
 
 export { DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES };
 
-export function isValidPhone(value: string, country: CountryCode) {
+export function isPhoneNumberPossible(value: string, country: CountryCode) {
   const trimmed = value.trim();
   if (!trimmed) return false;
   try {
-    return isValidPhoneNumber(trimmed, country);
+    return isPossiblePhoneNumber(trimmed, country);
   } catch {
     return false;
   }

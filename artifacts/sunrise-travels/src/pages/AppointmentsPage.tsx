@@ -12,7 +12,7 @@ import {
   CountryPhoneInput,
   DEFAULT_PHONE_COUNTRY,
   formatPhone,
-  isValidPhone,
+  isPhoneNumberPossible,
 } from "@/components/forms/CountryPhoneInput";
 
 type Service = "nadra" | "visa" | "passport";
@@ -106,8 +106,8 @@ export default function AppointmentsPage() {
     else if (!EMAIL_PATTERN.test(email.trim())) next.email = "Please enter a valid email address.";
 
     if (!phone.trim()) next.phone = "Please enter your phone number.";
-    else if (!isValidPhone(phone, phoneCountry)) {
-      next.phone = "Please enter a valid phone number for the selected country.";
+    else if (!isPhoneNumberPossible(phone, phoneCountry)) {
+      next.phone = "Please enter a phone number with a valid length for the selected country.";
     }
 
     if (requiresQueryDescription && !notes.trim()) {

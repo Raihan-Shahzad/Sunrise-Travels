@@ -2,7 +2,7 @@ import { useState } from "react";
 import { User, Mail, Phone, CheckCircle2, AlertCircle, Loader2, ArrowRight, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CountryCode } from "libphonenumber-js";
-import { CountryPhoneInput, DEFAULT_PHONE_COUNTRY, isValidPhone } from "@/components/forms/CountryPhoneInput";
+import { CountryPhoneInput, DEFAULT_PHONE_COUNTRY, isPhoneNumberPossible } from "@/components/forms/CountryPhoneInput";
 
 type HotelPref = "3star" | "4star" | "5star";
 type FormState = "idle" | "loading" | "success";
@@ -85,7 +85,7 @@ export default function PilgrimageForm() {
     if (!e.trim()) err.email = "Email required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) err.email = "Enter a valid email";
     if (!p.trim()) err.phone = "Phone required";
-    else if (!isValidPhone(p, phoneCountry)) err.phone = "Enter a valid number for the selected country";
+    else if (!isPhoneNumberPossible(p, phoneCountry)) err.phone = "Enter a phone number with a valid length for the selected country";
     if (!m) err.month = "Please select a preferred month";
     return err;
   }
