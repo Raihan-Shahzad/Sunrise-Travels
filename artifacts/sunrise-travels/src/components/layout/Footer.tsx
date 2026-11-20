@@ -1,8 +1,10 @@
 import { Link } from "wouter";
 import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Clock } from "lucide-react";
 import { PHONE, PHONE_INTL, EMAIL } from "@/lib/site-config";
+import { getNextHajj } from "@/lib/hijri";
 
 export default function Footer() {
+  const hajjYear = getNextHajj().gregorianYear;
   return (
     <footer className="mt-auto bg-[#071B17] py-16 text-emerald-50/70">
       <div className="container mx-auto px-4">
@@ -13,7 +15,7 @@ export default function Footer() {
               <img src="/sunrise-travels-logo.png" alt="Sunrise Travels" className="h-14 w-14 object-contain" />
             </Link>
             <p className="text-sm leading-relaxed text-emerald-50/60">
-              Your trusted partner for worldwide flights, Hajj &amp; Umrah packages, and professional NADRA, Visa, and Passport assistance.
+              Your trusted partner for worldwide flights and Hajj and Umrah packages.
             </p>
             <div className="flex gap-3 pt-1">
               <a href="#" className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 transition-colors hover:bg-accent hover:text-primary" aria-label="Facebook">
@@ -59,14 +61,11 @@ export default function Footer() {
           <div className="space-y-6">
             <h4 className="font-heading text-lg font-semibold text-white">Quick Links</h4>
             <nav className="flex flex-col gap-3 text-sm">
+              <Link href="/" className="transition-colors hover:text-amber-300">Home</Link>
               <Link href="/flights" className="transition-colors hover:text-amber-300">Flights</Link>
-              <Link href="/hajj-umrah" className="transition-colors hover:text-amber-300">Hajj &amp; Umrah</Link>
-              <Link href="/nadra-assistance" className="transition-colors hover:text-amber-300">NADRA Assistance</Link>
-              <Link href="/visa-assistance" className="transition-colors hover:text-amber-300">Visa Services</Link>
-              <Link href="/passport-assistance" className="transition-colors hover:text-amber-300">Passport Assistance</Link>
-              <Link href="/about" className="transition-colors hover:text-amber-300">About Us</Link>
-              <Link href="/blog" className="transition-colors hover:text-amber-300">Travel Blog</Link>
-              <Link href="/contact" className="transition-colors hover:text-amber-300">Contact</Link>
+              <Link href="/umrah" className="transition-colors hover:text-amber-300">Umrah</Link>
+              <Link href="/hajj" className="transition-colors hover:text-amber-300">Hajj {hajjYear}</Link>
+              <Link href="/contact" className="transition-colors hover:text-amber-300">Contact Us</Link>
             </nav>
           </div>
 

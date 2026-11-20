@@ -4,9 +4,11 @@ import { MobileDrawer } from "./MobileDrawer";
 import { Phone, MessageCircle, MapPin, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PHONE, PHONE_INTL, WHATSAPP_NUMBER, EMAIL } from "@/lib/site-config";
+import { getNextHajj } from "@/lib/hijri";
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const hajjYear = getNextHajj().gregorianYear;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,23 +48,17 @@ export default function Header() {
 
       {/* Main Nav */}
       <div className="container mx-auto flex items-center justify-between p-4">
-        <Link href="/" className="flex shrink-0 items-center">
+        <Link href="/" aria-label="Go to home page" className="flex shrink-0 items-center">
           <img src="/logo.png" alt="Sunrise Travels" className="h-14 w-auto object-contain md:h-16" />
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-7 text-[0.76rem] font-semibold uppercase tracking-[0.13em] text-slate-700 lg:flex">
+        <nav className="hidden items-center gap-6 text-[0.76rem] font-semibold uppercase tracking-[0.13em] text-slate-700 lg:flex">
+          <Link href="/" className="transition-colors hover:text-accent-600">Home</Link>
           <Link href="/flights" className="transition-colors hover:text-accent-600">Flights</Link>
-          <Link href="/hajj-umrah" className="transition-colors hover:text-accent-600">Hajj &amp; Umrah</Link>
-          <Link href="/nadra-assistance" className="transition-colors hover:text-accent-600">NADRA</Link>
-          <Link href="/visa-assistance" className="transition-colors hover:text-accent-600">Visa</Link>
-          <Link href="/passport-assistance" className="transition-colors hover:text-accent-600">Passport</Link>
-          <Link
-            href="/appointments"
-            className="rounded-full bg-accent px-5 py-2 text-[0.72rem] font-bold uppercase tracking-[0.12em] text-primary transition-colors hover:bg-accent/85"
-          >
-            Book Appt
-          </Link>
+          <Link href="/umrah" className="transition-colors hover:text-accent-600">Umrah</Link>
+          <Link href="/hajj" className="transition-colors hover:text-accent-600">Hajj {hajjYear}</Link>
+          <Link href="/contact" className="transition-colors hover:text-accent-600">Contact Us</Link>
         </nav>
 
         {/* Desktop CTAs */}

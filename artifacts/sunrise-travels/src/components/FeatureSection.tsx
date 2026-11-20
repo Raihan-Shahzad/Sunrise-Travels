@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plane, Building2, Ticket, FileText, FileCheck, BookOpen } from "lucide-react";
+import { Plane, Building2, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import SectionHeading from "@/components/SectionHeading";
+import { getNextHajj } from "@/lib/hijri";
 
 const ASSET_BASE = import.meta.env.BASE_URL;
 
-const features = [
+const features = (nextHajjYear: number) => [
   {
     title: "Worldwide Flights",
     icon: Plane,
@@ -15,39 +16,18 @@ const features = [
     image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=900&auto=format&fit=crop",
   },
   {
-    title: "Hajj Packages",
+    title: `Hajj ${nextHajjYear}`,
     icon: BookOpen,
-    description: "All-inclusive pilgrimage solutions.",
-    link: "/hajj-umrah",
+    description: "Hajj packages with in-person guidance from our Luton team.",
+    link: "/hajj",
     image: `${ASSET_BASE}images/makkah-kaaba.jpg`,
   },
   {
     title: "Umrah Packages",
     icon: Building2,
     description: "Flexible Umrah trips for families and groups.",
-    link: "/hajj-umrah",
+    link: "/umrah",
     image: `${ASSET_BASE}images/madinah-masjid-nabawi.jpg`,
-  },
-  {
-    title: "NADRA Guidance",
-    icon: FileCheck,
-    description: "New or renewed NICOPs, lost or damaged replacements, and other queries.",
-    link: "/nadra-assistance",
-    image: `${ASSET_BASE}images/pakistan-flag.jpg`,
-  },
-  {
-    title: "Visa Assistance",
-    icon: FileText,
-    description: "New visas, renewals, extensions, and other visa queries.",
-    link: "/visa-assistance",
-    image: `${ASSET_BASE}images/passport-visa.jpg`,
-  },
-  {
-    title: "Passport Assistance",
-    icon: Ticket,
-    description: "New passports, renewals, lost or damaged replacements, and other queries.",
-    link: "/passport-assistance",
-    image: `${ASSET_BASE}images/passport.jpg`,
   },
 ];
 
@@ -62,6 +42,7 @@ const itemVariants = {
 };
 
 export default function FeatureSection() {
+  const nextHajjYear = getNextHajj().gregorianYear;
   return (
     <section className="relative overflow-hidden bg-slate-50 py-20 md:py-24">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -73,7 +54,7 @@ export default function FeatureSection() {
         <SectionHeading
           eyebrow="Our Services"
           title="Travel, planned end to end"
-          subtitle="From booking your dream flight to handling complex visa paperwork — one team for the whole journey."
+          subtitle="From worldwide flights to guided Hajj and Umrah packages, one team for your journey."
           className="mb-14 md:mb-16"
         />
 
@@ -84,7 +65,7 @@ export default function FeatureSection() {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
         >
-          {features.map((f) => {
+          {features(nextHajjYear).map((f) => {
             const Icon = f.icon;
             return (
               <motion.div key={f.title} variants={itemVariants}>

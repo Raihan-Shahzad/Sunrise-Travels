@@ -2,9 +2,8 @@ import { Building2, MessageCircle, Phone } from "lucide-react";
 import { PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
 import { getNextHajj } from "@/lib/hijri";
 
-const hajj = getNextHajj();
-
 export default function HajjNoticeSection() {
+  const hajj = getNextHajj();
   return (
     <section className="py-16 bg-[#0D2B1D] relative overflow-hidden">
       <div

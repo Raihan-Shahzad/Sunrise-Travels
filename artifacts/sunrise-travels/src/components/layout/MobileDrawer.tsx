@@ -3,9 +3,11 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Phone, MessageCircle } from "lucide-react";
 import { PHONE, PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
+import { getNextHajj } from "@/lib/hijri";
 
 export function MobileDrawer() {
   const [isOpen, setIsOpen] = useState(false);
+  const hajjYear = getNextHajj().gregorianYear;
 
   return (
     <>
@@ -39,14 +41,9 @@ export function MobileDrawer() {
             <div className="mt-2 space-y-2 px-4">
               <Link href="/" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Home</Link>
               <Link href="/flights" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Flights</Link>
-              <Link href="/hajj-umrah" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Hajj &amp; Umrah</Link>
-              <Link href="/nadra-assistance" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">NADRA</Link>
-              <Link href="/visa-assistance" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Visa</Link>
-              <Link href="/passport-assistance" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Passport</Link>
-              <Link href="/appointments" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-semibold text-accent-600">📅 Book Appointment</Link>
-              <Link href="/about" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">About Us</Link>
-              <Link href="/blog" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Blog</Link>
-              <Link href="/contact" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Contact</Link>
+              <Link href="/umrah" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Umrah</Link>
+              <Link href="/hajj" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Hajj {hajjYear}</Link>
+              <Link href="/contact" onClick={() => setIsOpen(false)} className="block px-2 py-3 text-base font-medium">Contact Us</Link>
             </div>
 
             <div className="mt-8 px-4 flex flex-col gap-3">

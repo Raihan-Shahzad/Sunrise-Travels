@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { Check, Phone, MessageCircle, Star, Shield, Heart, Clock, Plane, Bus, FileText, MapPin, Users, ChevronRight, Building2 } from "lucide-react";
 import { PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
 import { Link } from "wouter";
-import HajjNoticeSection from "@/components/HajjNoticeSection";
 import { getCurrentHijri } from "@/lib/hijri";
 
 const ASSET_BASE = import.meta.env.BASE_URL;
@@ -64,13 +63,12 @@ const whyUs = [
 const sites: { name: string; location: string; image: string; position?: string }[] = [
   { name: "Masjid al-Haram", location: "Makkah", image: `${ASSET_BASE}images/makkah-kaaba.jpg` },
   { name: "Masjid Nabawi", location: "Madinah", image: `${ASSET_BASE}images/madinah-masjid-nabawi.jpg` },
-  { name: "Mount Arafat", location: "Makkah", image: `${ASSET_BASE}images/mount-arafat.jpg` },
   { name: "Masjid Quba", location: "Madinah", image: `${ASSET_BASE}images/masjid-quba.jpg`, position: "center 75%" },
 ];
 
 const current = getCurrentHijri();
 
-export default function HajjUmrahPage() {
+export default function UmrahPage() {
   return (
     <div className="bg-slate-50 min-h-screen">
 
@@ -94,8 +92,8 @@ export default function HajjUmrahPage() {
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
             <p className="text-amber-400 font-semibold tracking-[0.3em] uppercase text-sm mb-3">بسم الله الرحمن الرحيم</p>
             <h1 className="font-heading text-4xl md:text-6xl font-semibold tracking-tight text-white leading-[1.05] mb-5">
-              Your Sacred Journey<br />
-              <span className="text-amber-400">to Makkah & Madinah</span>
+              Plan Your Umrah Journey<br />
+              <span className="text-amber-400">with Confidence</span>
             </h1>
             <p className="text-lg text-emerald-100 mb-8 max-w-2xl mx-auto leading-relaxed">
               Alhamdulillah — let us handle every detail of your pilgrimage so you can focus entirely on your worship. Trusted by thousands of UK Muslims since 2003.
@@ -131,9 +129,6 @@ export default function HajjUmrahPage() {
           </div>
         </div>
       </div>
-
-      {/* ── Hajj in-office notice ── */}
-      <HajjNoticeSection />
 
       {/* ── Main content ── */}
       <section className="py-16 container mx-auto px-4">

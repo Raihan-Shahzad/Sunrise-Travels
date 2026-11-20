@@ -11,14 +11,14 @@ const destinations = [
     sub: "Saudi Arabia",
     image: `${ASSET_BASE}images/makkah-kaaba.jpg`,
     price: "Umrah from £850",
-    link: "/hajj-umrah",
+    link: "/umrah",
   },
   {
     name: "Madinah",
     sub: "Saudi Arabia",
     image: `${ASSET_BASE}images/madinah-masjid-nabawi.jpg`,
     price: "Packages from £850",
-    link: "/hajj-umrah",
+    link: "/umrah",
   },
   {
     name: "Lahore",

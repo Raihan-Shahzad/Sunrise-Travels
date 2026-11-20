@@ -39,7 +39,7 @@ export default function WhyChooseUs() {
             </div>
             <div className="flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
               <Button asChild size="lg" className="h-14 rounded-xl bg-accent px-8 font-semibold text-primary hover:bg-accent/85">
-                <Link href="/about">Discover Our Story</Link>
+                <Link href="/contact">Contact Us</Link>
               </Button>
             </div>
           </div>

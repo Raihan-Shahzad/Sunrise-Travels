@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { Link } from "wouter";
-import { getNextHajj } from "@/lib/hijri";
 import { ChevronRight, Star, Users, Clock } from "lucide-react";
 
 const ASSET_BASE = import.meta.env.BASE_URL;
@@ -12,8 +11,6 @@ const highlights = [
 ];
 
 export default function UmrahPromoSection() {
-  const hajj = getNextHajj();
-
   return (
     <section className="relative py-24 overflow-hidden">
       {/* Background */}
@@ -43,7 +40,7 @@ export default function UmrahPromoSection() {
             transition={{ duration: 0.6 }}
           >
             <p className="text-amber-400 font-semibold tracking-[0.25em] uppercase text-xs mb-3">
-              ✦ Umrah & Hajj {hajj.gregorianYear} / {hajj.hijriYear}H ✦
+              ✦ Umrah Packages ✦
             </p>
             <h2 className="font-heading text-4xl md:text-5xl font-semibold tracking-tight text-white leading-[1.08] mb-5">
               Answer the Call of<br />
@@ -53,7 +50,7 @@ export default function UmrahPromoSection() {
               Let Sunrise Travels take care of every detail — flights, hotels, visas, and guided ziyarah — so you can focus purely on your worship and spiritual growth.
             </p>
             <Link
-              href="/hajj-umrah"
+              href="/umrah"
               className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-[#0D2B1D] font-bold px-8 py-4 rounded-xl transition-all shadow-lg text-base"
             >
               View Packages <ChevronRight className="w-5 h-5" />

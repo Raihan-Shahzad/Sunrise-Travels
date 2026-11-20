@@ -55,8 +55,7 @@ export default function Hero() {
             </h1>
 
             <p className="mt-7 max-w-xl text-lg leading-relaxed text-emerald-50/85 md:text-xl">
-              A trusted UK travel agency for premium Hajj &amp; Umrah packages, worldwide
-              flights, and seamless NADRA, visa &amp; passport assistance.
+              A trusted UK travel agency for premium Hajj and Umrah packages and worldwide flights.
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:gap-4">
@@ -65,7 +64,7 @@ export default function Hero() {
                 size="lg"
                 className="h-14 rounded-xl bg-amber-500 px-8 text-base font-bold text-[#0D2B1D] shadow-lg shadow-black/30 transition-colors hover:bg-amber-400"
               >
-                <Link href="/hajj-umrah">View Umrah Packages</Link>
+                <Link href="/umrah">View Umrah Packages</Link>
               </Button>
               <Button
                 asChild
