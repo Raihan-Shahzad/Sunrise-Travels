@@ -62,7 +62,7 @@ export default function Footer() {
               <Link href="/flights" className="transition-colors hover:text-amber-300">Flights</Link>
               <Link href="/hajj-umrah" className="transition-colors hover:text-amber-300">Hajj &amp; Umrah</Link>
               <Link href="/nadra-assistance" className="transition-colors hover:text-amber-300">NADRA Assistance</Link>
-              <Link href="/pakistani-visa-assistance" className="transition-colors hover:text-amber-300">Visa Services</Link>
+              <Link href="/visa-assistance" className="transition-colors hover:text-amber-300">Visa Services</Link>
               <Link href="/passport-assistance" className="transition-colors hover:text-amber-300">Passport Assistance</Link>
               <Link href="/about" className="transition-colors hover:text-amber-300">About Us</Link>
               <Link href="/blog" className="transition-colors hover:text-amber-300">Travel Blog</Link>

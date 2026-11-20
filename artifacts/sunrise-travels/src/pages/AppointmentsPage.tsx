@@ -7,6 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import PageHero from "@/components/PageHero";
 import { WHATSAPP_NUMBER } from "@/lib/site-config";
+import type { CountryCode } from "libphonenumber-js";
+import {
+  CountryPhoneInput,
+  DEFAULT_PHONE_COUNTRY,
+  formatPhone,
+  isValidPhone,
+} from "@/components/forms/CountryPhoneInput";
 
 type Service = "nadra" | "visa" | "passport";
 
@@ -34,7 +41,7 @@ const SERVICES = {
     ],
   },
   visa: {
-      label: "Pakistani Visa Assistance",
+      label: "Visa Assistance",
     color: "text-emerald-600",
     bg: "bg-emerald-50",
     border: "border-emerald-200",
@@ -60,7 +67,6 @@ const SERVICES = {
 };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
-const PHONE_PATTERN = /^[+]?[\d\s().-]+$/;
 
 type FieldErrors = {
   name?: string;
@@ -79,6 +85,7 @@ export default function AppointmentsPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>(DEFAULT_PHONE_COUNTRY);
   const [notes, setNotes] = useState("");
   const [serviceError, setServiceError] = useState("");
   const [errors, setErrors] = useState<FieldErrors>({});
@@ -98,11 +105,9 @@ export default function AppointmentsPage() {
     if (!email.trim()) next.email = "Please enter your email address.";
     else if (!EMAIL_PATTERN.test(email.trim())) next.email = "Please enter a valid email address.";
 
-    const phoneValue = phone.trim();
-    const phoneDigits = phoneValue.replace(/\D/g, "");
-    if (!phoneValue) next.phone = "Please enter your phone number.";
-    else if (!PHONE_PATTERN.test(phoneValue) || phoneDigits.length < 7 || phoneDigits.length > 15) {
-      next.phone = "Please enter a valid phone number (7–15 digits).";
+    if (!phone.trim()) next.phone = "Please enter your phone number.";
+    else if (!isValidPhone(phone, phoneCountry)) {
+      next.phone = "Please enter a valid phone number for the selected country.";
     }
 
     if (requiresQueryDescription && !notes.trim()) {
@@ -150,7 +155,7 @@ export default function AppointmentsPage() {
       "My details:",
       `Name: ${name.trim()}`,
       `Email: ${email.trim()}`,
-      `Phone: ${phone.trim()}`,
+      `Phone: ${formatPhone(phone, phoneCountry)}`,
       ...(notes.trim() ? ["", `Notes: ${notes.trim()}`] : []),
       "",
       "Please confirm my appointment. Thank you.",
@@ -165,7 +170,7 @@ export default function AppointmentsPage() {
       <PageHero
         eyebrow="Free consultation"
         title="Book an Appointment"
-        subtitle="Schedule a free consultation at our Luton office for NADRA, Pakistani Visa, or Passport assistance."
+        subtitle="Schedule a free consultation at our Luton office for NADRA, Visa, or Passport assistance."
         image="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2000&auto=format&fit=crop"
         size="compact"
       />
@@ -314,14 +319,14 @@ export default function AppointmentsPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-slate-700 mb-1.5" htmlFor="appointment-phone">Phone Number *</label>
-                    <Input
+                    <CountryPhoneInput
                       id="appointment-phone"
-                      type="tel"
+                      country={phoneCountry}
+                      onCountryChange={(country) => { setPhoneCountry(country); clearError("phone"); }}
                       value={phone}
-                      onChange={(e) => { setPhone(e.target.value); clearError("phone"); }}
+                      onValueChange={(value) => { setPhone(value); clearError("phone"); }}
                       placeholder="07xxx xxxxxx"
-                      className={cn("h-11", errors.phone && "border-red-400 focus-visible:ring-red-300")}
-                      aria-invalid={!!errors.phone}
+                      error={errors.phone}
                     />
                     {errors.phone && <p className="text-xs text-red-600 mt-1.5">{errors.phone}</p>}
                   </div>
@@ -372,7 +377,7 @@ export default function AppointmentsPage() {
                   <SummaryItem icon={<FileText className="w-4 h-4" />} label="Type" value={subService} />
                   <SummaryItem icon={<User className="w-4 h-4" />} label="Name" value={name} />
                   <SummaryItem icon={<User className="w-4 h-4" />} label="Email" value={email} />
-                  <SummaryItem icon={<User className="w-4 h-4" />} label="Phone" value={phone} />
+                  <SummaryItem icon={<User className="w-4 h-4" />} label="Phone" value={formatPhone(phone, phoneCountry) || phone} />
                   {notes && (
                     <SummaryItem
                       icon={<FileText className="w-4 h-4" />}

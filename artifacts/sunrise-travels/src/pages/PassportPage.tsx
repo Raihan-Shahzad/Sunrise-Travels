@@ -1,15 +1,17 @@
-import { AlertTriangle, CheckCircle2, Ticket, Phone, MessageCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Phone, MessageCircle } from "lucide-react";
 import { PHONE, PHONE_INTL, WHATSAPP_NUMBER } from "@/lib/site-config";
 import PageHero from "@/components/PageHero";
+
+const ASSET_BASE = import.meta.env.BASE_URL;
 
 const steps = [
   { num: 1, title: "Document Review", desc: "We check your existing documents (CNIC, old passport, etc.) to ensure they meet consulate requirements before your visit." },
   { num: 2, title: "Application Guidance", desc: "We walk you through completing the necessary forms accurately to avoid rejections or delays." },
-  { num: 3, title: "Consulate Appointment", desc: "We help you understand how to schedule your visit to the relevant Pakistani consulate or High Commission." },
+  { num: 3, title: "Appointment Guidance", desc: "We help you understand how to schedule your visit to the relevant consulate or High Commission." },
 ];
 
 const documents = [
-  "Valid or expired Pakistani Passport",
+  "Valid or expired passport",
   "Original CNIC / NICOP",
   "Passport-sized photographs (white background)",
   "Proof of UK address (utility bill or bank statement)",
@@ -24,7 +26,7 @@ export default function PassportPage() {
         eyebrow="Passport Services"
         title="Passport Assistance"
         subtitle="Expert guidance for passport applications, renewals, and replacements."
-        image="https://images.unsplash.com/photo-1569154941061-e231b4725ef1?q=80&w=2000&auto=format&fit=crop"
+        image={`${ASSET_BASE}images/passport.jpg`}
       />
 
       <section className="py-16 container mx-auto px-4">
@@ -59,14 +61,6 @@ export default function PassportPage() {
                 </li>
               ))}
             </ol>
-
-            <div className="mt-7 p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-start gap-4">
-              <Ticket className="w-7 h-7 text-primary shrink-0 mt-0.5" />
-              <div>
-                <h4 className="font-semibold text-slate-900 mb-1">Passport Types</h4>
-                <p className="text-sm text-slate-600">We assist with Ordinary (36, 72, or 100-page), Official, and Diplomatic passports across Normal, Urgent, and Fast Track categories.</p>
-              </div>
-            </div>
           </div>
 
           {/* What to bring */}

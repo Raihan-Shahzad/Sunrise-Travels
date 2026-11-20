@@ -20,7 +20,7 @@ type Appointment = {
 
 const labels = {
   nadra: "NADRA Assistance",
-  visa: "Pakistani Visa Assistance",
+  visa: "Visa Assistance",
   passport: "Passport Assistance",
 };
 

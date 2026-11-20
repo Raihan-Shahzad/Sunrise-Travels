@@ -33,6 +33,7 @@ function Router() {
           <Route path="/flights" component={FlightsPage} />
           <Route path="/hajj-umrah" component={HajjUmrahPage} />
           <Route path="/nadra-assistance" component={NADRAPage} />
+          <Route path="/visa-assistance" component={VisaPage} />
           <Route path="/pakistani-visa-assistance" component={VisaPage} />
           <Route path="/passport-assistance" component={PassportPage} />
           <Route path="/blog" component={BlogPage} />

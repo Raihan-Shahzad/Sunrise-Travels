@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { User, Mail, Phone, CheckCircle2, AlertCircle, Loader2, ArrowRight, Minus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { CountryCode } from "libphonenumber-js";
+import { CountryPhoneInput, DEFAULT_PHONE_COUNTRY, isValidPhone } from "@/components/forms/CountryPhoneInput";
 
 type HotelPref = "3star" | "4star" | "5star";
 type FormState = "idle" | "loading" | "success";
@@ -72,17 +74,18 @@ export default function PilgrimageForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>(DEFAULT_PHONE_COUNTRY);
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState<Set<string>>(new Set());
   const [formState, setFormState] = useState<FormState>("idle");
 
-  function validate(n: string, e: string, p: string, m: string): Errors {
+  function validate(n: string, e: string, p: string, m: string, country: CountryCode = phoneCountry): Errors {
     const err: Errors = {};
     if (!n.trim()) err.name = "Full name required";
     if (!e.trim()) err.email = "Email required";
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) err.email = "Enter a valid email";
     if (!p.trim()) err.phone = "Phone required";
-    else if (!/^[\d\s+\-()\\.]{7,15}$/.test(p.trim())) err.phone = "Enter a valid number";
+    else if (!isValidPhone(p, phoneCountry)) err.phone = "Enter a valid number for the selected country";
     if (!m) err.month = "Please select a preferred month";
     return err;
   }
@@ -197,7 +200,20 @@ export default function PilgrimageForm() {
 
         <InputField icon={User} placeholder="Full name" value={name} onChange={setName} onBlur={() => touch("name")} error={touched.has("name") ? errors.name : undefined} />
         <InputField icon={Mail} type="email" placeholder="Email address" value={email} onChange={setEmail} onBlur={() => touch("email")} error={touched.has("email") ? errors.email : undefined} />
-        <InputField icon={Phone} type="tel" placeholder="Phone / WhatsApp" value={phone} onChange={setPhone} onBlur={() => touch("phone")} error={touched.has("phone") ? errors.phone : undefined} />
+        <div>
+          <CountryPhoneInput
+            icon={Phone}
+            country={phoneCountry}
+            onCountryChange={(country) => { setPhoneCountry(country); if (touched.has("phone")) setErrors(validate(name, email, phone, month, country)); }}
+            value={phone}
+            onValueChange={setPhone}
+            onBlur={() => touch("phone")}
+            error={touched.has("phone") ? errors.phone : undefined}
+            placeholder="Phone / WhatsApp"
+            className="h-auto px-3.5 py-3"
+          />
+          <FieldError msg={touched.has("phone") ? errors.phone : undefined} />
+        </div>
 
         <button
           type="submit"

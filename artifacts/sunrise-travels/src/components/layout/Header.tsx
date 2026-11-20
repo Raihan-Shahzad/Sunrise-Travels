@@ -55,7 +55,7 @@ export default function Header() {
           <Link href="/flights" className="transition-colors hover:text-accent-600">Flights</Link>
           <Link href="/hajj-umrah" className="transition-colors hover:text-accent-600">Hajj &amp; Umrah</Link>
           <Link href="/nadra-assistance" className="transition-colors hover:text-accent-600">NADRA</Link>
-          <Link href="/pakistani-visa-assistance" className="transition-colors hover:text-accent-600">Visa</Link>
+          <Link href="/visa-assistance" className="transition-colors hover:text-accent-600">Visa</Link>
           <Link href="/passport-assistance" className="transition-colors hover:text-accent-600">Passport</Link>
           <Link
             href="/appointments"

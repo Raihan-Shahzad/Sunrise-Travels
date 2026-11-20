@@ -16,7 +16,7 @@ const SERVICE_META: Record<Service, { label: string; color: string; bg: string; 
     activeText: "text-white",
   },
   visa: {
-    label: "Pakistani Visa Assistance",
+    label: "Visa Assistance",
     color: "text-emerald-700",
     bg: "bg-emerald-50",
     border: "border-emerald-100",
